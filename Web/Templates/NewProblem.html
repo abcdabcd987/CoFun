@@ -1,0 +1,54 @@
+$def with (mesg=None)
+<!doctype html>
+<head>
+  <title>Add a problem</title>
+</head>
+<body>
+  <form method="POST" action="/newproblem/" name="LoginForm">
+    <div>
+      <label for="ProblemTitle">Title</label>
+      <input type="text" id="ProblemTitle" name="ProblemTitle">
+    </div>
+    <div>
+      <label for="ProblemTime">Time Limit</label>
+      <input type="text" id="ProblemTime" name="ProblemTime" value="1000">
+    </div>
+    <div>
+      <label for="ProblemMemory">Memory Limit</label>
+      <input type="text" id="ProblemMemory" name="ProblemMemory" value="131072">
+    </div>
+    <div>
+      <label for="ProblemDescription">Description</label>
+      <textarea id="ProblemDescription" name="ProblemDescription"></textarea>
+    </div>
+    <div>
+      <label for="ProblemInput">Input Format</label>
+      <textarea id="ProblemInput" name="ProblemInput"></textarea>
+    </div>
+    <div>
+      <label for="ProblemOutput">Output Format</label>
+      <textarea id="ProblemOutput" name="ProblemOutput"></textarea>
+    </div>
+    <div>
+      <label for="ProblemSampleIn">SampleIn</label>
+      <textarea id="ProblemSampleIn" name="ProblemSampleIn"></textarea>
+    </div>
+    <div>
+      <label for="ProblemSampleOut">SampleOut</label>
+      <textarea id="ProblemSampleOut" name="ProblemSampleOut"></textarea>
+    </div>
+    <div>
+      <label for="ProblemHint">Hint</label>
+      <textarea id="ProblemHint" name="ProblemHint"></textarea>
+    </div>
+    <div>
+      <label for="ProblemSource">Source</label>
+      <input type="text" id="ProblemSource" name="ProblemSource">
+    </div>
+    <div>
+      <input type="submit" id="submit" name="submit" value="Add">
+    </div>
+  </form>
+  $if mesg:
+      <em>$mesg</em>
+</body>

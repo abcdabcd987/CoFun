@@ -1,0 +1,24 @@
+$def with (problems)
+<!doctype html>
+<head>
+  <title>Problem List</title>
+</head>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <td>Problem ID</td>
+        <td>Title</td>
+        <td>Source</td>
+      </tr>
+    </thead>
+    <tbody>
+      $for problem in problems:
+          <tr>
+            <td>$problem.ProblemID</td>
+            <td><a href="/p$problem.ProblemID">$problem.ProblemTitle</a></td>
+            <td>$problem.ProblemSource</td>
+          </tr>
+    </tbody>
+  </table>
+</body>

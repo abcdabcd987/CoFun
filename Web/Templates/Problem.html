@@ -1,0 +1,44 @@
+$def with (problem)
+<!doctype html>
+<head>
+  <title>Problem List</title>
+</head>
+<body>
+  <h1>$problem.ProblemID: $problem.ProblemTitle</h1>
+  <section>
+    <ul>
+      <li>Time Limit: $problem.ProblemTime ms</li>
+      <li>Memory Limit: $problem.ProblemMemory KBytes</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Description</h2>
+    <pre>$problem.ProblemDescription</pre>
+  </section>
+  <section>
+    <h2>Input Format</h2>
+    <pre>$problem.ProblemInput</pre>
+  </section>
+  <section>
+    <h2>Output Format</h2>
+    <pre>$problem.ProblemOutput</pre>
+  </section>
+  <section>
+    <h2>Sample Input</h2>
+    <pre>$problem.ProblemSampleIn</pre>
+  </section>
+  <section>
+    <h2>Sample Output</h2>
+    <pre>$problem.ProblemSampleOut</pre>
+  </section>
+  $if problem.ProblemHint:
+      <section>
+        <h2>Hint</h2>
+        <pre>$problem.ProblemHint</pre>
+      </section>
+  $if problem.ProblemSource:
+      <section>
+        <h2>Source</h2>
+        <pre>$problem.ProblemSource</pre>
+      </section>
+</body>

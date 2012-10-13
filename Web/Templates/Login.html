@@ -1,0 +1,22 @@
+$def with (mesg=None)
+<!doctype html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+  <form method="POST" action="/login/" name="LoginForm">
+    <div>
+      <label for="Username">Username</label>
+      <input type="text" id="Username" name="Username">
+    </div>
+    <div>
+      <label for="Password">Password</label>
+      <input type="password" id="Password" name="Password">
+    </div>
+    <div>
+      <input type="submit" id="submit" name="submit" value="Login">
+    </div>
+  </form>
+  $if mesg:
+    <em>$mesg</em>
+</body>
