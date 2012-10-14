@@ -37,4 +37,5 @@ urls = (
     '/newproblem/(.*)', 'NewProblem',
     '/p(.*)',           'Problem',
     '/status/(.*)',     'Status',
+    '/s(.*)',           'ShowSource',
 )

@@ -151,5 +151,10 @@ class Status:
     def GET(self, arg):
         return render.Status(db.Status.GetList())
 
+class ShowSource:
+    def GET(self, submitid):
+        (results, detail, avgmem, sumtime) = db.Status.Detail(int(submitid))
+        return render.ShowSource(detail, results, int(avgmem) if avgmem else 0, int(sumtime) if sumtime else 0)
+
 if __name__ == '__main__':
     app.run()

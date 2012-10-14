@@ -58,6 +58,13 @@ class Status(object):
         res = list(db.select("Submit, User", what="`SubmitID` ,  `ProblemID` ,  `ContestID` ,  `SubmitTime` ,  `SubmitLanguage` ,  `SubmitCode` ,  `SubmitStatus` ,  `SubmitRunTime` ,  `SubmitRunMemory` , `CodeLength` ,  `JudgeTime` ,  `CompilerInfo` ,  `UserName`", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC"))
         return None if len(res) == 0 else res
 
+    @staticmethod
+    def Detail(submitid):
+        res1 = list(db.select("Result", what="Result, RunTime, RunMemory", where="SubmitID="+str(submitid), order="ResultID DESC"));
+        res2 = list(db.select("Submit", where="SubmitID="+str(submitid)));
+        res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
+        return (None, None, None, None) if not res2 else (res1, res2[0], res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])
+
 #print Member.Add('test7', 'T7', 'test7@test.com')
 #print Member.GetPassword(Member.GetID('test7'))
 #print Utility.SHA1('T7')
