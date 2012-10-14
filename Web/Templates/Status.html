@@ -1,0 +1,42 @@
+$def with (status)
+<!doctype html>
+<head>
+  <title>Status</title>
+</head>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <td>Submit ID</td>
+        <td>User</td>
+        <td>Problem</td>
+        <td>Result</td>
+        <td>Memory</td>
+        <td>Time</td>
+        <td>Language</td>
+        <td>Code Length</td>
+        <td>Submit Time</td>
+      </tr>
+    </thead>
+    <tbody>
+      $for s in status:
+          <tr>
+            <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
+            <td>$s.UserName</td>
+            <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
+            <td>$:RESULTLIST[s.SubmitStatus]</a></td>
+            $if s.SubmitStatus > 1:
+                <td>${s.SubmitRunMemory}K</td>
+            $else:
+                <td></td>
+            $if s.SubmitStatus > 1:
+                <td>${s.SubmitRunTime}MS</td>
+            $else:
+                <td></td>
+            <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+            <td>${s.CodeLength}B</td>
+            <td>$s.SubmitTime</td>
+          </tr>
+    </tbody>
+  </table>
+</body>
