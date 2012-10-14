@@ -43,6 +43,21 @@ class Problem(object):
         res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemDescription, ProblemInput, ProblemOutput, ProblemSampleIn, ProblemSampleOut, ProblemTime, ProblemMemory, ProblemHint, ProblemSource", where="ProblemID="+str(problemid)))
         return None if len(res) == 0 else res[0]
 
+    @staticmethod
+    def Exist(problemid):
+        res = list(db.select("Problem", what="count(*)", where="ProblemID="+str(problemid)))
+        return True if res else False
+
+class Status(object):
+    @staticmethod
+    def Submit(problemid, contestid, userid, lang, code):
+        return db.insert("Submit", ProblemID=problemid, ContestID=contestid, UserID=userid, SubmitLanguage=lang, SubmitCode=code, CodeLength=len(code))
+
+    @staticmethod
+    def GetList():
+        res = list(db.select("Submit, User", what="`SubmitID` ,  `ProblemID` ,  `ContestID` ,  `SubmitTime` ,  `SubmitLanguage` ,  `SubmitCode` ,  `SubmitStatus` ,  `SubmitRunTime` ,  `SubmitRunMemory` , `CodeLength` ,  `JudgeTime` ,  `CompilerInfo` ,  `UserName`", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC"))
+        return None if len(res) == 0 else res
+
 #print Member.Add('test7', 'T7', 'test7@test.com')
 #print Member.GetPassword(Member.GetID('test7'))
 #print Utility.SHA1('T7')

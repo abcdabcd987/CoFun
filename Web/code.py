@@ -2,31 +2,24 @@ import re
 import web
 import db
 import random
-from config import render
+from config import * 
 
-urls = (
-    '/',                'Index',
-    '/register/(.*)',   'Register',
-    '/login/(.*)',      'Login',
-    '/logout/(.*)',     'Logout',
-    '/problem/(.*)',    'ProblemList',
-    '/submit/(.+)',     'Submit',
-    '/newproblem/(.*)', 'NewProblem',
-    '/p(\d{4,})',       'Problem',
-)
 
 app = web.application(urls, globals())
 session = web.session.Session(app, web.session.DiskStore('Sessions'), initializer={'userid': -1, 'username': None})
+
+vtitle = re.compile(r'.{4,100}$')
+vtime = re.compile(r'^\d{3,6}$')
+vmemory = re.compile(r'^\d{3,6}$')
+vname = re.compile(r".{4,50}$")
+vpwd = re.compile(r".{4,}$")
+vemail = re.compile(r".+@.+")
 
 class Index:
     def GET(self):
         return render.Index(session.userid, session.username)
 
 class Register:
-    vname = re.compile(r".{4,50}$")
-    vpwd = re.compile(r".{4,}$")
-    vemail = re.compile(r".+@.+")
-
     def GET(self, arg):
         if session.userid == -1:
             return render.Register()
@@ -43,11 +36,11 @@ class Register:
         email = i.get('Email', None)
         if not password or not repassword or not password == repassword:
             return render.Register("Passwords don't match")
-        if not username or not Register.vname.match(username):
+        if not username or not vname.match(username):
             return render.Register('UserName must be between 4 to 50 characters')
-        if not Register.vpwd.match(password):
+        if not vpwd.match(password):
             return render.Register('Password must be more than 4 characters')
-        if not email or not Register.vemail.match(email):
+        if not email or not vemail.match(email):
             return render.Register('Invaild Email address')
 
         userid = db.Member.Add(username, password, email)
@@ -86,13 +79,14 @@ class Logout:
         raise web.seeother('/')
 
 class NewProblem:
-    vtitle = re.compile(r'.{4,100}$')
-    vtime = re.compile(r'^\d{3,6}$')
-    vmemory = re.compile(r'^\d{3,6}$')
     def GET(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
         return render.NewProblem()
 
     def POST(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
         i = web.input()
         title = i.get('ProblemTitle', None)
         time = i.get('ProblemTime', None)
@@ -104,11 +98,11 @@ class NewProblem:
         sampleout = i.get('ProblemSampleOut', None)
         hint = i.get('ProblemHint', None)
         source = i.get('ProblemSource', None)
-        if not title or not NewProblem.vtitle.match(title):
+        if not title or not vtitle.match(title):
             return render.NewProblem('Title must be between 4 to 100 characters.')
-        if not time or not NewProblem.vtime.match(time):
+        if not time or not vtime.match(time):
             return render.NewProblem('Time Limit must be between 100 and 999999.')
-        if not memory or not NewProblem.vmemory.match(time):
+        if not memory or not vmemory.match(time):
             return render.NewProblem('Memory Limit must be between 100 and 999999.')
         if not formatin:
             return render.NewProblem('Must have Input Format.')
@@ -132,6 +126,30 @@ class Problem:
     def GET(self, problemid):
         return render.Problem(db.Problem.Get(int(problemid)))
 
+class Submit:
+    def GET(self, problemid):
+        if session.userid == -1:
+            raise web.seeother('/')
+        return render.Submit(problemid)
+
+    def POST(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        i = web.input()
+        problemid = i.get("ProblemID", None)
+        language = i.get("SubmitLanguage", None)
+        code = i.get("SubmitCode", None)
+        if not language:
+            return render.Submit(problemid, 'Must select a language')
+        if not code:
+            return render.Submit(problemid, 'Must submit some code')
+        if not problemid or not db.Problem.Exist(int(problemid)):
+            return render.Submit(problemid, 'Problem Does Not Exist')
+        return db.Status.Submit(problemid, 0, session.userid, language, code)
+
+class Status:
+    def GET(self, arg):
+        return render.Status(db.Status.GetList())
 
 if __name__ == '__main__':
     app.run()

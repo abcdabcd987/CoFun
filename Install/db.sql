@@ -1,24 +1,8 @@
--- phpMyAdmin SQL Dump
--- version 3.5.2.2
--- http://www.phpmyadmin.net
---
--- 主机: localhost
--- 生成日期: 2012 年 10 月 13 日 00:16
--- 服务器版本: 5.5.28
--- PHP 版本: 5.4.6
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
---
--- 数据库: `cofun`
---
-
--- --------------------------------------------------------
-
---
--- 表的结构 `Contest`
---
+CREATE DATABASE IF NOT EXISTS `cofun` CHARACTER SET=utf8 ;
+USE `cofun` ;
 
 CREATE TABLE IF NOT EXISTS `Contest` (
   `ContestID` int(9) NOT NULL AUTO_INCREMENT,
@@ -28,12 +12,6 @@ CREATE TABLE IF NOT EXISTS `Contest` (
   `ContestDescription` text NOT NULL,
   PRIMARY KEY (`ContestID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `ContestProblem`
---
 
 CREATE TABLE IF NOT EXISTS `ContestProblem` (
   `ContestID` int(9) NOT NULL,
@@ -45,12 +23,6 @@ CREATE TABLE IF NOT EXISTS `ContestProblem` (
   KEY `order` (`ProblemOrder`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- 表的结构 `Privilege`
---
-
 CREATE TABLE IF NOT EXISTS `Privilege` (
   `PrivilegeID` int(9) NOT NULL AUTO_INCREMENT,
   `UserID` int(9) NOT NULL,
@@ -58,12 +30,6 @@ CREATE TABLE IF NOT EXISTS `Privilege` (
   PRIMARY KEY (`PrivilegeID`),
   KEY `uid` (`UserID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `Problem`
---
 
 CREATE TABLE IF NOT EXISTS `Problem` (
   `ProblemID` int(9) NOT NULL AUTO_INCREMENT,
@@ -81,11 +47,6 @@ CREATE TABLE IF NOT EXISTS `Problem` (
   PRIMARY KEY (`ProblemID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
--- --------------------------------------------------------
-
---
--- 表的结构 `Submit`
---
 
 CREATE TABLE IF NOT EXISTS `Submit` (
   `SubmitID` int(9) NOT NULL AUTO_INCREMENT,
@@ -96,6 +57,8 @@ CREATE TABLE IF NOT EXISTS `Submit` (
   `SubmitLanguage` int(9) NOT NULL,
   `SubmitCode` text NOT NULL,
   `SubmitStatus` tinyint(4) NOT NULL,
+  `SubmitRunTime` int(9) NOT NULL,
+  `SubmitRunMemory` int(9) NOT NULL,
   `CodeLength` int(9) NOT NULL,
   `JudgeTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `CompilerInfo` text NOT NULL,
@@ -105,30 +68,18 @@ CREATE TABLE IF NOT EXISTS `Submit` (
   KEY `cid` (`ContestID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
--- --------------------------------------------------------
-
---
--- 表的结构 `Testcase`
---
-
-CREATE TABLE IF NOT EXISTS `Testcase` (
-  `TestcaseID` int(9) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `Result` (
+  `ResultID` int(9) NOT NULL AUTO_INCREMENT,
   `SubmitID` int(9) NOT NULL,
-  `TestcaseResult` tinyint(4) NOT NULL,
+  `Result` tinyint(4) NOT NULL,
   `RunTime` int(9) NOT NULL,
   `RunMemory` int(9) NOT NULL,
-  PRIMARY KEY (`TestcaseID`),
+  PRIMARY KEY (`ResultID`),
   KEY `sid` (`SubmitID`),
-  KEY `res` (`TestcaseResult`),
+  KEY `res` (`Result`),
   KEY `time` (`RunTime`),
   KEY `memory` (`RunMemory`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `User`
---
 
 CREATE TABLE IF NOT EXISTS `User` (
   `UserID` int(9) NOT NULL AUTO_INCREMENT,
