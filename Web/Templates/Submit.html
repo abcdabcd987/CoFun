@@ -1,0 +1,30 @@
+$def with (problemid, mesg=None)
+<!doctype html>
+<head>
+  <title>Submit</title>
+</head>
+<body>
+  <form method="POST" action="/submit/" name="SubmitForm">
+    <div>
+      <label for="ProblemID">Problem ID</label>
+      $if problemid:
+        <input type="text" name="ProblemID" value="$problemid">
+      $else:
+        <input type="text" name="ProblemID">
+      <label for="SubmitLanguage">Language</label>
+      <select name="SubmitLanguage">
+        <option value="1">C</option>
+        <option value="2">C++</option>
+        <option value="3">Free Pascal</option>
+      </select>
+    </div>
+    <div>
+      <textarea name="SubmitCode"></textarea>
+    </div>
+    <div>
+      <input type="submit" name="submit" value="Submit">
+    </div>
+  </form>
+  $if mesg:
+      <em>$mesg</em>
+</body>
