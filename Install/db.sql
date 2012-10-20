@@ -1,9 +1,6 @@
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE DATABASE IF NOT EXISTS `cofun` CHARACTER SET=utf8 ;
-USE `cofun` ;
-
 CREATE TABLE IF NOT EXISTS `Contest` (
   `ContestID` int(9) NOT NULL AUTO_INCREMENT,
   `ContestTitle` varchar(130) NOT NULL,
@@ -47,13 +44,26 @@ CREATE TABLE IF NOT EXISTS `Problem` (
   PRIMARY KEY (`ProblemID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
+CREATE TABLE IF NOT EXISTS `Result` (
+  `ResultID` int(9) NOT NULL AUTO_INCREMENT,
+  `SubmitID` int(9) NOT NULL,
+  `Result` tinyint(4) NOT NULL,
+  `RunTime` int(9) NOT NULL,
+  `RunMemory` int(9) NOT NULL,
+  `Diff` text NOT NULL,
+  PRIMARY KEY (`ResultID`),
+  KEY `sid` (`SubmitID`),
+  KEY `res` (`Result`),
+  KEY `time` (`RunTime`),
+  KEY `memory` (`RunMemory`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `Submit` (
   `SubmitID` int(9) NOT NULL AUTO_INCREMENT,
   `ProblemID` int(9) NOT NULL,
   `ContestID` int(9) NOT NULL,
   `UserID` int(9) NOT NULL,
-  `SubmitTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `SubmitTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `SubmitLanguage` int(9) NOT NULL,
   `SubmitCode` text NOT NULL,
   `SubmitStatus` tinyint(4) NOT NULL,
@@ -66,20 +76,7 @@ CREATE TABLE IF NOT EXISTS `Submit` (
   KEY `uid` (`UserID`),
   KEY `pid` (`ProblemID`),
   KEY `cid` (`ContestID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-CREATE TABLE IF NOT EXISTS `Result` (
-  `ResultID` int(9) NOT NULL AUTO_INCREMENT,
-  `SubmitID` int(9) NOT NULL,
-  `Result` tinyint(4) NOT NULL,
-  `RunTime` int(9) NOT NULL,
-  `RunMemory` int(9) NOT NULL,
-  PRIMARY KEY (`ResultID`),
-  KEY `sid` (`SubmitID`),
-  KEY `res` (`Result`),
-  KEY `time` (`RunTime`),
-  KEY `memory` (`RunMemory`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `User` (
   `UserID` int(9) NOT NULL AUTO_INCREMENT,
@@ -90,5 +87,5 @@ CREATE TABLE IF NOT EXISTS `User` (
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`),
   UNIQUE KEY `UserName_UNIQUE` (`UserName`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

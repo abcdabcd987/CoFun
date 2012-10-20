@@ -34,13 +34,12 @@ void dochild(void)
   ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 
   setuid(2222);
-  chdir("/home/cofun/tmp");
   freopen("input.txt", "r", stdin);
   freopen("output.txt", "w", stdout);
   freopen("error.txt", "w", stderr);
 
   nice(19);
-  execl("./a.out", "./a.out", (char *)0);
+  execl("./__a.out", "./__a.out", (char *)0);
   exit(0);
 }
 
@@ -115,6 +114,7 @@ int main(int argc, char* argv[])
     exit(1);
   time_limit = atoi(argv[1]);
   memory_limit = atoi(argv[2]);
+  chdir("/home/cofun/tmp");
   if ((pid = fork()) != 0)
     doparent();
   else
@@ -122,3 +122,4 @@ int main(int argc, char* argv[])
 
   exit(0);
 }
+

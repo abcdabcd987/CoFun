@@ -8,8 +8,8 @@ $def with (detail, results, mem, time)
       <ul>
         <li>Problem ID: $detail.ProblemID</li>
         <li>User: $detail.UserID</li>
-        <li>Average Memory: $mem Kbytes</li>
-        <li>Time: $time MS</li>
+        <li>Average Memory: ${mem}Kbytes</li>
+        <li>Time: ${time}MS</li>
         <li>Language: $:LANGUAGELIST[detail.SubmitLanguage]</li>
         <li>Result: $detail.SubmitStatus</li>
       </ul>
@@ -27,9 +27,9 @@ $def with (detail, results, mem, time)
               $for r in results:
                   <tr>
                     <td>$loop.index</td>
-                    <td>$r.Result</td>
-                    <td>$r.RunTime</td>
-                    <td>$r.RunMemory</td>
+                    <td>$:RESULTLIST[r.Result]</td>
+                    <td>${r.RunTime}ms</td>
+                    <td>${r.RunMemory}KBytes</td>
                   </tr>
             </tbody>
           </table>

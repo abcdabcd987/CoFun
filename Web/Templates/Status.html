@@ -26,7 +26,7 @@ $def with (status)
             <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
             <td>$:RESULTLIST[s.SubmitStatus]</a></td>
             $if s.SubmitStatus > 1:
-                <td>${s.SubmitRunMemory}K</td>
+                <td>${s.SubmitRunMemory}Kbytes</td>
             $else:
                 <td></td>
             $if s.SubmitStatus > 1:
