@@ -6,7 +6,8 @@ from config import *
 
 
 app = web.application(urls, globals())
-session = web.session.Session(app, web.session.DiskStore('Sessions'), initializer={'userid': -1, 'username': None})
+session = web.session.Session(app, web.session.DiskStore('Sessions'), initializer={'userid': -1, 'username': None, 'gravatar': None})
+render = web.template.render('Templates/', globals=globals(), base='Layout')
 
 vtitle = re.compile(r'.{4,100}$')
 vtime = re.compile(r'^\d{3,6}$')
@@ -17,7 +18,7 @@ vemail = re.compile(r".+@.+")
 
 class Index:
     def GET(self):
-        return render.Index(session.userid, session.username)
+        return render.Index()
 
 class Register:
     def GET(self, arg):
@@ -43,10 +44,12 @@ class Register:
         if not email or not vemail.match(email):
             return render.Register('Invaild Email address')
 
+        email = email.lower()
         userid = db.Member.Add(username, password, email)
         if userid:
             session.userid = userid
             session.username = username
+            session.gravatar = db.Utility.MD5(email)
             raise web.seeother('/')
         else:
             return render.Register('['+username+'] or ['+email+'] exists')
@@ -62,15 +65,17 @@ class Login:
         if session.userid != -1:
             raise web.seeother('/')
         i = web.input()
-        username = i.get('Username', None)
-        password = i.get('Password', None)
+        username = i.get('Username', ' ')
+        password = i.get('Password', ' ')
         userid = db.Member.GetID(username)
-        if userid and db.Utility.SHA1(password) == db.Member.GetPassword(userid):
-            session.userid = userid
-            session.username = username
-            raise web.seeother('/')
-        else:
-            return render.Login('Username or Password Errors!')
+        if userid:
+            info = db.Member.GetInfo(userid)
+            if db.Utility.SHA1(password) == info['UserPassword']:
+                session.userid = userid
+                session.username = username
+                session.gravatar = db.Utility.MD5(info['UserEmail'].lower())
+                raise web.seeother('/')
+        return render.Login('Username or Password Errors!')
 
 class Logout:
     def GET(self, arg):
@@ -145,7 +150,7 @@ class Submit:
             return render.Submit(problemid, 'Must submit some code')
         if not problemid or not db.Problem.Exist(int(problemid)):
             return render.Submit(problemid, 'Problem Does Not Exist')
-        return db.Status.Submit(problemid, 0, session.userid, language, code)
+        raise web.seeother('/status/')
 
 class Status:
     def GET(self, arg):

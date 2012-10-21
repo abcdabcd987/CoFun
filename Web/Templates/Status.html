@@ -1,42 +1,52 @@
 $def with (status)
-<!doctype html>
-<head>
-  <title>Status</title>
-</head>
-<body>
-  <table>
-    <thead>
-      <tr>
-        <td>Submit ID</td>
-        <td>User</td>
-        <td>Problem</td>
-        <td>Result</td>
-        <td>Memory</td>
-        <td>Time</td>
-        <td>Language</td>
-        <td>Code Length</td>
-        <td>Submit Time</td>
-      </tr>
-    </thead>
-    <tbody>
-      $for s in status:
-          <tr>
-            <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
-            <td>$s.UserName</td>
-            <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
-            <td>$:RESULTLIST[s.SubmitStatus]</a></td>
-            $if s.SubmitStatus > 1:
-                <td>${s.SubmitRunMemory}Kbytes</td>
-            $else:
-                <td></td>
-            $if s.SubmitStatus > 1:
-                <td>${s.SubmitRunTime}MS</td>
-            $else:
-                <td></td>
-            <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
-            <td>${s.CodeLength}B</td>
-            <td>$s.SubmitTime</td>
-          </tr>
-    </tbody>
-  </table>
-</body>
+$var title: Status
+$code:
+    ALERTLIST = {
+        0:      None,
+        1:      'alert alert-info',
+        2:      None,
+        3:      'alert alert-success',
+        4:      'alert alert-error',
+        5:      'alert alert-error',
+        6:      'alert',
+        7:      'alert',
+    }
+<table class="table table-hover">
+  <caption><h2>Status</h2></caption>
+  <thead>
+    <tr>
+      <th class="span1">#</th>
+      <th>User</th>
+      <th>Problem</th>
+      <th>Result</th>
+      <th>Memory</th>
+      <th>Time</th>
+      <th>Language</th>
+      <th>Code Length</th>
+      <th>Submit Time</th>
+    </tr>
+  </thead>
+  <tbody id="status-table">
+    $for s in status:
+        $if ALERTLIST[s.SubmitStatus]:
+            <tr class="$ALERTLIST[s.SubmitStatus]">
+        $else:
+            <tr>
+          <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
+          <td>$s.UserName</td>
+          <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
+          <td><a href="/s$s.SubmitID">$:RESULTLIST[s.SubmitStatus]</a></td>
+          $if s.SubmitStatus > 1:
+              <td>${s.SubmitRunMemory}KB</td>
+          $else:
+              <td></td>
+          $if s.SubmitStatus > 1:
+              <td>${s.SubmitRunTime}MS</td>
+          $else:
+              <td></td>
+          <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+          <td>${s.CodeLength}B</td>
+          <td>$s.SubmitTime</td>
+        </tr>
+  </tbody>
+</table>

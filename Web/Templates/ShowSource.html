@@ -1,41 +1,35 @@
 $def with (detail, results, mem, time)
-<!doctype html>
-<head>
-  <title>Source Code</title>
-</head>
-<body>
-      <h1>Submit in detail</h1>
-      <ul>
-        <li>Problem ID: $detail.ProblemID</li>
-        <li>User: $detail.UserID</li>
-        <li>Average Memory: ${mem}Kbytes</li>
-        <li>Time: ${time}MS</li>
-        <li>Language: $:LANGUAGELIST[detail.SubmitLanguage]</li>
-        <li>Result: $detail.SubmitStatus</li>
-      </ul>
-      $if results:
-          <table>
-            <thead>
-              <tr>
-                <td>Testcase</td>
-                <td>Result</td>
-                <td>Time</td>
-                <td>Memory</td>
-              </tr>
-            </thead>
-            <tbody>
-              $for r in results:
-                  <tr>
-                    <td>$loop.index</td>
-                    <td>$:RESULTLIST[r.Result]</td>
-                    <td>${r.RunTime}ms</td>
-                    <td>${r.RunMemory}KBytes</td>
-                  </tr>
-            </tbody>
-          </table>
-      $if detail.CompilerInfo:
-          <h2>Compile Info</h2>
-          <pre>$detail.CompilerInfo</pre>
-      <h2>Source Code</h2>
-      <pre>$detail.SubmitCode</pre>
-</body>
+<h1>Submit in detail</h1>
+<dl class="dl-horizontal">
+  <dt>Problem ID</dt><dd>$detail.ProblemID</dd>
+  <dt>User</dt><dd>$detail.UserID</dd>
+  <dt>Average Memory</dt><dd>${mem}Kbytes</dd>
+  <dt>Time</dt><dd>${time}MS</dd>
+  <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
+  <dt>Result</dt><dd>$detail.SubmitStatus</dd>
+</dl>
+$if results:
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Testcase</th>
+          <th>Result</th>
+          <th>Time</th>
+          <th>Memory</th>
+        </tr>
+      </thead>
+      <tbody>
+        $for r in results:
+            <tr>
+              <td>$loop.index</td>
+              <td>$:RESULTLIST[r.Result]</td>
+              <td>${r.RunTime}ms</td>
+              <td>${r.RunMemory}KBytes</td>
+            </tr>
+      </tbody>
+    </table>
+$if detail.CompilerInfo:
+    <h2>Compile Info</h2>
+    <pre>$detail.CompilerInfo</pre>
+<h2>Source Code</h2>
+<pre>$detail.SubmitCode</pre>

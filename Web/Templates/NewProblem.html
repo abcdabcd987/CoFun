@@ -1,54 +1,58 @@
 $def with (mesg=None)
-<!doctype html>
-<head>
-  <title>Add a problem</title>
-</head>
-<body>
-  <form method="POST" action="/newproblem/" name="LoginForm">
-    <div>
-      <label for="ProblemTitle">Title</label>
+$var title: Add a Problem
+<form method="POST" action="/newproblem/" name="LoginForm" class="form-horizontal">
+  <legend>Add a Problem</legend>
+  <div class="control-group">
+    <label for="ProblemTitle" class="control-label">Title</label>
+    <div class="controls">
       <input type="text" id="ProblemTitle" name="ProblemTitle">
     </div>
-    <div>
-      <label for="ProblemTime">Time Limit</label>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="ProblemTime">Time Limit</label>
+    <div class="controls">
       <input type="text" id="ProblemTime" name="ProblemTime" value="1000">
     </div>
-    <div>
-      <label for="ProblemMemory">Memory Limit</label>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="ProblemMemory">Memory Limit</label>
+    <div class="controls">
       <input type="text" id="ProblemMemory" name="ProblemMemory" value="131072">
     </div>
-    <div>
-      <label for="ProblemDescription">Description</label>
-      <textarea id="ProblemDescription" name="ProblemDescription"></textarea>
-    </div>
-    <div>
-      <label for="ProblemInput">Input Format</label>
-      <textarea id="ProblemInput" name="ProblemInput"></textarea>
-    </div>
-    <div>
-      <label for="ProblemOutput">Output Format</label>
-      <textarea id="ProblemOutput" name="ProblemOutput"></textarea>
-    </div>
-    <div>
-      <label for="ProblemSampleIn">SampleIn</label>
-      <textarea id="ProblemSampleIn" name="ProblemSampleIn"></textarea>
-    </div>
-    <div>
-      <label for="ProblemSampleOut">SampleOut</label>
-      <textarea id="ProblemSampleOut" name="ProblemSampleOut"></textarea>
-    </div>
-    <div>
-      <label for="ProblemHint">Hint</label>
-      <textarea id="ProblemHint" name="ProblemHint"></textarea>
-    </div>
-    <div>
-      <label for="ProblemSource">Source</label>
+  </div>
+  <div class="control-group">
+    <label for="ProblemSource" class="control-label">Source</label>
+    <div class="controls">
       <input type="text" id="ProblemSource" name="ProblemSource">
     </div>
-    <div>
-      <input type="submit" id="submit" name="submit" value="Add">
-    </div>
-  </form>
-  $if mesg:
-      <em>$mesg</em>
-</body>
+  </div>
+  <div class="control-group">
+    <label for="ProblemDescription">Description</label>
+    <textarea class="big-textarea" id="ProblemDescription" name="ProblemDescription"></textarea>
+  </div>
+  <div>
+    <label for="ProblemInput">Input Format</label>
+    <textarea class="big-textarea" id="ProblemInput" name="ProblemInput"></textarea>
+  </div>
+  <div>
+    <label for="ProblemOutput">Output Format</label>
+    <textarea class="big-textarea" id="ProblemOutput" name="ProblemOutput"></textarea>
+  </div>
+  <div>
+    <label for="ProblemSampleIn">SampleIn</label>
+    <textarea class="big-textarea" id="ProblemSampleIn" name="ProblemSampleIn"></textarea>
+  </div>
+  <div>
+    <label for="ProblemSampleOut">SampleOut</label>
+    <textarea class="big-textarea" id="ProblemSampleOut" name="ProblemSampleOut"></textarea>
+  </div>
+  <div>
+    <label for="ProblemHint">Hint</label>
+    <textarea class="big-textarea" id="ProblemHint" name="ProblemHint"></textarea>
+  </div>
+  <div>
+    <input type="submit" id="submit" name="submit" value="Add" class="btn btn-primary">
+  </div>
+</form>
+$if mesg:
+    <em>$mesg</em>

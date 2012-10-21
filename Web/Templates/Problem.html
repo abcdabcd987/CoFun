@@ -1,56 +1,47 @@
 $def with (problem)
-<!doctype html>
 $if problem:
-    <head>
-      <title>$problem.ProblemTitle - Problem $problem.ProblemID</title>
-    </head>
-    <body>
-      <h1>$problem.ProblemID: $problem.ProblemTitle</h1>
-      <section>
-        <ul>
-          <li>Time Limit: $problem.ProblemTime ms</li>
-          <li>Memory Limit: $problem.ProblemMemory KBytes</li>
-          <li><a href="/submit/$problem.ProblemID">Submit</a></li>
-        </ul>
-      </section>
-      <section>
-        <h2>Description</h2>
-        <pre>$problem.ProblemDescription</pre>
-      </section>
-      <section>
-        <h2>Input Format</h2>
-        <pre>$problem.ProblemInput</pre>
-      </section>
-      <section>
-        <h2>Output Format</h2>
-        <pre>$problem.ProblemOutput</pre>
-      </section>
-      <section>
-        <h2>Sample Input</h2>
-        <pre>$problem.ProblemSampleIn</pre>
-      </section>
-      <section>
-        <h2>Sample Output</h2>
-        <pre>$problem.ProblemSampleOut</pre>
-      </section>
-      $if problem.ProblemHint:
-          <section>
-            <h2>Hint</h2>
-            <pre>$problem.ProblemHint</pre>
-          </section>
-      $if problem.ProblemSource:
-          <section>
-            <h2>Source</h2>
-            <pre>$problem.ProblemSource</pre>
-          </section>
-      <section>
-        <a href="/submit/$problem.ProblemID">Submit</a>
-      </section>
-    </body>
+    $var title: $problem.ProblemTitle - Problem $problem.ProblemID
+    <h1 class="center">$problem.ProblemID: $problem.ProblemTitle</h1>
+    <section>
+      <dl class="dl-horizontal">
+        <dt>Time Limit</dt><dd>$problem.ProblemTime ms</dd>
+        <dt>Memory Limit</dt><dd>$problem.ProblemMemory KBytes</dd>
+      </dl>
+    </section>
+    <a class="btn btn-primary" href="/submit/$problem.ProblemID">Submit</a>
+    <section>
+      <h2>Description</h2>
+      <pre>$problem.ProblemDescription</pre>
+    </section>
+    <section>
+      <h2>Input Format</h2>
+      <pre>$problem.ProblemInput</pre>
+    </section>
+    <section>
+      <h2>Output Format</h2>
+      <pre>$problem.ProblemOutput</pre>
+    </section>
+    <section>
+      <h2>Sample Input</h2>
+      <pre>$problem.ProblemSampleIn</pre>
+    </section>
+    <section>
+      <h2>Sample Output</h2>
+      <pre>$problem.ProblemSampleOut</pre>
+    </section>
+    $if problem.ProblemHint:
+        <section>
+          <h2>Hint</h2>
+          <pre>$problem.ProblemHint</pre>
+        </section>
+    $if problem.ProblemSource:
+        <section>
+          <h2>Source</h2>
+          <pre>$problem.ProblemSource</pre>
+        </section>
+    <section>
+      <a class="btn btn-primary" href="/submit/$problem.ProblemID">Submit</a>
+    </section>
 $else:
-    <head>
-      <title>Not Found Requested Problem</title>
-    </head>
-    <body>
-      <h1>Not Found Requested Problem</h1>
-    </body>
+    $var title: Not Found Requested Problem
+    <h1>Not Found Requested Problem</h1>

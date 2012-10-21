@@ -1,0 +1,23 @@
+.center {
+  text-align: center;
+}
+
+body {
+  padding-top: 60px;
+}
+
+.nav-gravatar {
+  margin-top: -8px;
+  margin-bottom: -8px;
+}
+
+.big-textarea {
+  width: 500px;
+  height: 400px;
+  margin-bottom: 13px;
+  font-family: monospace;
+}
+
+#status-table {
+  font-weight: bold;
+}

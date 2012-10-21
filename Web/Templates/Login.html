@@ -1,22 +1,25 @@
 $def with (mesg=None)
-<!doctype html>
-<head>
-  <title>Login</title>
-</head>
-<body>
-  <form method="POST" action="/login/" name="LoginForm">
-    <div>
-      <label for="Username">Username</label>
-      <input type="text" id="Username" name="Username">
+$var title: Login
+<form method="POST" action="/login/" name="LoginForm" class="form-horizontal">
+  <legend>Login</legend>
+  <div class="control-group">
+    <label for="Username" class="control-label">Username</label>
+    <div class="controls">
+      <input type="text" id="Username" name="Username" placeholder="Username or Email">
     </div>
-    <div>
-      <label for="Password">Password</label>
-      <input type="password" id="Password" name="Password">
+  </div>
+  <div class="control-group">
+    <label for="Password" class="control-label">Password</label>
+    <div class="controls">
+      <input type="password" id="Password" name="Password" placeholder="Password">
     </div>
-    <div>
-      <input type="submit" id="submit" name="submit" value="Login">
+  </div>
+  <div>
+    <input type="submit" id="submit" name="submit" class="btn btn-primary" value="Login">
+  </div>
+</form>
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$mesg</p>
     </div>
-  </form>
-  $if mesg:
-    <em>$mesg</em>
-</body>

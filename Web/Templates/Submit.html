@@ -1,30 +1,35 @@
 $def with (problemid, mesg=None)
-<!doctype html>
-<head>
-  <title>Submit</title>
-</head>
-<body>
-  <form method="POST" action="/submit/" name="SubmitForm">
-    <div>
-      <label for="ProblemID">Problem ID</label>
-      $if problemid:
+$var title: Submit
+<form method="POST" action="/submit/" name="SubmitForm" class="form-horizontal">
+  <legend>Submit</legend>
+  <div class="control-group">
+    <label for="ProblemID" class="control-label">Problem ID</label>
+    <div class="controls">
+    $if problemid:
         <input type="text" name="ProblemID" value="$problemid">
-      $else:
+    $else:
         <input type="text" name="ProblemID">
-      <label for="SubmitLanguage">Language</label>
-      <select name="SubmitLanguage">
-        <option value="1">C</option>
-        <option value="2">C++</option>
-        <option value="3">Free Pascal</option>
-      </select>
     </div>
-    <div>
-      <textarea name="SubmitCode"></textarea>
+  </div>
+  <div class="control-group">
+    <label for="SubmitLanguage" class="control-label">Language</label>
+    <div class="controls">
+    <select name="SubmitLanguage">
+      <option value="1">C</option>
+      <option value="2">C++</option>
+      <option value="3">Free Pascal</option>
+    </select>
+  </div>
+  </div>
+  <div>
+    <textarea name="SubmitCode" class="bit-textarea"></textarea>
+  </div>
+  <div>
+    <input type="submit" name="submit" value="Submit" class="btn btn-primary">
+  </div>
+</form>
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$mesg</p>
     </div>
-    <div>
-      <input type="submit" name="submit" value="Submit">
-    </div>
-  </form>
-  $if mesg:
-      <em>$mesg</em>
-</body>

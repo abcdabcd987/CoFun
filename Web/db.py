@@ -10,16 +10,25 @@ class Utility(object):
     def SHA1(content):
         return hashlib.sha1(content).hexdigest()
 
+    @staticmethod
+    def MD5(content):
+        return hashlib.md5(content).hexdigest()
+
 class Member(object):
     @staticmethod
     def GetID(nameoremail):
         res = list(db.select("User", what="UserID", where="UserEmail='"+nameoremail+"' or UserName='"+nameoremail+"'"))
         return None if len(res) == 0 else int(res[0]['UserID'])
 
+    #@staticmethod
+    #def GetPassword(userid):
+    #    res = list(db.select("User", what="UserPassword", where="UserID="+str(userid)))
+    #    return None if len(res) == 0 else res[0]['UserPassword']
+
     @staticmethod
-    def GetPassword(userid):
-        res = list(db.select("User", what="UserPassword", where="UserID="+str(userid)))
-        return None if len(res) == 0 else res[0]['UserPassword']
+    def GetInfo(userid):
+        res = list(db.select("User", where="UserID="+str(userid)))
+        return None if len(res) == 0 else res[0]
 
     @staticmethod
     def Add(username, userpwd, useremail):

@@ -1,30 +1,37 @@
 $def with (mesg=None)
-<!doctype html>
-<head>
-  <title>Register</title>
-</head>
-<body>
-  <form method="POST" action="/register/" name="RegisterForm">
-    <div>
-      <label for="Username">Username</label>
-      <input type="text" id="Username" name="Username">
+$var title: Register
+<form method="POST" action="/register/" name="RegisterForm" class="form-horizontal">
+  <legend>Register</legend>
+  <div class="control-group">
+    <label for="Username" class="control-label">Username</label>
+    <div class="controls">
+      <input type="text" id="Username" name="Username" placeholder="Username">
     </div>
-    <div>
-      <label for="Password">Password</label>
-      <input type="password" id="Password" name="Password">
+  </div>
+  <div class="control-group">
+    <label for="Password" class="control-label">Password</label>
+    <div class="controls">
+      <input type="password" id="Password" name="Password" placeholder="Password">
     </div>
-    <div>
-      <label for="RePassword">Re-Password</label>
-      <input type="password" id="RePassword" name="RePassword">
+  </div>
+  <div class="control-group">
+    <label for="RePassword" class="control-label">Re-Password</label>
+    <div class="controls">
+      <input type="password" id="RePassword" name="RePassword" placeholder="Password, again">
     </div>
-    <div>
-      <label for="Email">Email</label>
-      <input type="email" id="Email" name="Email">
+  </div>
+  <div class="control-group">
+    <label for="Email" class="control-label">Email</label>
+    <div class="controls">
+      <input type="email" id="Email" name="Email" placeholder="Email(Only for avatar)">
     </div>
-    <div>
-      <input type="submit" id="submit" name="submit" value="Register">
+  </div>
+  <div>
+    <input type="submit" id="submit" name="submit" value="Register" class="btn btn-primary">
+  </div>
+</form>
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$mesg</p>
     </div>
-  </form>
-  $if mesg:
-    <em>$mesg</em>
-</body>

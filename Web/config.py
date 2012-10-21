@@ -1,7 +1,9 @@
 import web
 
 web.config.debug = False
-render = web.template.render('Templates/', globals=globals())
+#web.config.debug = True
+
+VERSION = '0.1 git commit 10'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -11,14 +13,14 @@ CONFIG = {
 }
 
 RESULTLIST = {
-    0:      'Waiting',
-    1:      'Compile Error',
-    2:      'Running & Judging',
-    3:      'Accepted',
-    4:      'Wrong Answer',
-    5:      'Runtime Error',
-    6:      'Time Limit Exceeded',
-    7:      'Memory Limit Exceeded',
+    0:      '<span class="label">Waiting</span>',
+    1:      '<span class="label label-info">Compile Error</span>',
+    2:      '<span class="label">Running & Judging</span>',
+    3:      '<span class="label label-success">Accepted</span>',
+    4:      '<span class="label label-important">Wrong Answer</span>',
+    5:      '<span class="label label-inverse">Runtime Error</span>',
+    6:      '<span class="label label-warning">Time Limit Exceeded</span>',
+    7:      '<span class="label label-warning">Memory Limit Exceeded</span>',
 }
 
 LANGUAGELIST = {
@@ -38,4 +40,11 @@ urls = (
     '/p(.*)',           'Problem',
     '/status/(.*)',     'Status',
     '/s(.*)',           'ShowSource',
+    '/layout','layout',
 )
+
+web.config.session_parameters['cookie_name'] = 'cofun_session'
+web.config.session_parameters['timeout'] = 86400
+web.config.session_parameters['ignore_expiry'] = True
+web.config.session_parameters['ignore_change_ip'] = True
+web.config.session_parameters['secret_key'] = 'fL|Christiana@fxqXtfN%Blake(ldA0A0J'
