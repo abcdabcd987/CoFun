@@ -1,12 +1,12 @@
 $def with (detail, results, mem, time)
 <h1>Submit in detail</h1>
 <dl class="dl-horizontal">
-  <dt>Problem ID</dt><dd>$detail.ProblemID</dd>
+  <dt>Problem ID</dt><dd><a href="/p$detail.ProblemID">$detail.ProblemID</a></dd>
   <dt>User</dt><dd>$detail.UserID</dd>
   <dt>Average Memory</dt><dd>${mem}Kbytes</dd>
   <dt>Time</dt><dd>${time}MS</dd>
   <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
-  <dt>Result</dt><dd>$detail.SubmitStatus</dd>
+  <dt>Result</dt><dd>$:RESULTLIST[detail.SubmitStatus]</dd>
 </dl>
 $if results:
     <table class="table table-hover">

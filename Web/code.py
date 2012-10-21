@@ -150,6 +150,7 @@ class Submit:
             return render.Submit(problemid, 'Must submit some code')
         if not problemid or not db.Problem.Exist(int(problemid)):
             return render.Submit(problemid, 'Problem Does Not Exist')
+        db.Status.Submit(problemid, 0, session.userid, language, code)
         raise web.seeother('/status/')
 
 class Status:

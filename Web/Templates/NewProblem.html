@@ -1,5 +1,10 @@
 $def with (mesg=None)
 $var title: Add a Problem
+$if mesg:
+    <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>INFO</strong><p>$mesg</p>
+    </div>
 <form method="POST" action="/newproblem/" name="LoginForm" class="form-horizontal">
   <legend>Add a Problem</legend>
   <div class="control-group">
@@ -54,5 +59,3 @@ $var title: Add a Problem
     <input type="submit" id="submit" name="submit" value="Add" class="btn btn-primary">
   </div>
 </form>
-$if mesg:
-    <em>$mesg</em>

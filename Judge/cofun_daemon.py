@@ -4,7 +4,11 @@ import time
 import shutil
 import MySQLdb
 
-COMPILE_COMMAND = 'gcc __source.c -o __a.out -Wall'
+COMPILE_COMMAND = {
+    1:  'gcc __source.c -o __a.out -Wall',
+    2:  'g++ __source.cc -o __a.out -Wall',
+    3:  'fpc __source.pas -o__a.out -vewh -Tlinux',
+}
 COMPILE_REWRITE = ' 1> __compile_info.txt 2>&1'
 EXTENSION = {
     1:  'c',
@@ -33,8 +37,8 @@ def GetTasks():
     tasks = cur.fetchall()
     return tasks
 
-def Compile():
-    os.system(COMPILE_COMMAND + COMPILE_REWRITE)
+def Compile(lang):
+    os.system(COMPILE_COMMAND[lang] + COMPILE_REWRITE)
     info = open('__compile_info.txt', 'r').read()
     return (os.path.exists('__a.out'), info)
 
@@ -50,11 +54,12 @@ def Process(tasks):
         #print task
         os.chdir('/home/cofun/tmp')
         RemoveFiles()
-        fsource = open('__source.c', 'w')
+        lang = task['SubmitLanguage']
+        fsource = open('__source.'+EXTENSION[lang], 'w')
         fsource.write(task['SubmitCode'])
         fsource.close()
 
-        (compile_success, compile_info) = Compile()
+        (compile_success, compile_info) = Compile(lang)
         if compile_info:
             print '%s  has compile info' % task['SubmitID']
             cur.execute('UPDATE Submit SET CompilerInfo=%s, JudgeTime=CURRENT_TIMESTAMP WHERE SubmitID=%s', (compile_info, task['SubmitID']))
