@@ -13,6 +13,8 @@ $else:
 <link href="/static/bootstrap-responsive.min.css" rel="stylesheet">
 <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Code+Pro' rel='stylesheet' type='text/css'>
 <link href="/static/cofun.css" rel="stylesheet">
+$if 'refresh' in content:
+    <meta http-equiv="refresh" content="$content.refresh">
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -59,10 +61,10 @@ $else:
         $else:
             <ul class="nav pull-right">
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/$session.gravatar?s=32" alt="$session.username" class="nav-gravatar" /> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/$session.gravatar?s=32&r=X" alt="$session.username" class="nav-gravatar" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">$session.username</li>
-                  <li><a href="http://www.gravater.com">Change avater</a></li>
+                  <li><a href="http://www.gravatar.com" target="_blank">Change avater</a></li>
                   <li><a href="/logout/">Logout</a></li>
                   <!--<li class="divider"></li>
                   <li class="nav-header">Nav header</li>

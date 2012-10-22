@@ -9,7 +9,7 @@ app = web.application(urls, globals())
 session = web.session.Session(app, web.session.DiskStore('Sessions'), initializer={'userid': -1, 'username': None, 'gravatar': None})
 render = web.template.render('Templates/', globals=globals(), base='Layout')
 
-vtitle = re.compile(r'.{4,100}$')
+vtitle = re.compile(r'.{2,100}$')
 vtime = re.compile(r'^\d{3,6}$')
 vmemory = re.compile(r'^\d{3,6}$')
 vname = re.compile(r".{4,50}$")
@@ -104,7 +104,7 @@ class NewProblem:
         hint = i.get('ProblemHint', None)
         source = i.get('ProblemSource', None)
         if not title or not vtitle.match(title):
-            return render.NewProblem('Title must be between 4 to 100 characters.')
+            return render.NewProblem('Title must be between 2 to 100 characters.')
         if not time or not vtime.match(time):
             return render.NewProblem('Time Limit must be between 100 and 999999.')
         if not memory or not vmemory.match(time):
@@ -125,7 +125,14 @@ class NewProblem:
 
 class ProblemList:
     def GET(self, arg):
-        return render.ProblemList(db.Problem.GetList())
+        try:
+            page = int(arg)
+        except:
+            page = 1
+        count = (db.Problem.Count()+CONFIG['problemrows']-1)//CONFIG['problemrows']
+        page = min(page, count)
+        page = max(page, 1)
+        return render.ProblemList(db.Problem.GetList((page-1)*CONFIG['problemrows'], CONFIG['problemrows']), page, count)
 
 class Problem:
     def GET(self, problemid):
@@ -155,7 +162,14 @@ class Submit:
 
 class Status:
     def GET(self, arg):
-        return render.Status(db.Status.GetList())
+        try:
+            page = int(arg)
+        except:
+            page = 1
+        count = (db.Status.Count()+CONFIG['statusrows']-1)//CONFIG['statusrows']
+        page = min(page, count)
+        page = max(page, 1)
+        return render.Status(db.Status.GetList((page-1)*CONFIG['statusrows'], CONFIG['statusrows']), page, count)
 
 class ShowSource:
     def GET(self, submitid):

@@ -1,7 +1,26 @@
-$def with (problems)
+$def with (problems, page, count)
 $var title: Problemlist
 <table class="table table-hover">
-  <caption><h2>Problemlist</h2></caption>
+  <caption>
+    <h2>Problemlist</h2>
+    <div class="pagination">
+      <ul>
+        $if page == 1:
+            <li class="disabled"><a href="#">Prev</a></li>
+        $else:
+            <li><a href="/status/${page-1}">Prev</a></li>
+        $for i in xrange(1, count+1):
+            $if page == i:
+                <li class="active"><a href="/status/$i">$i</a></li>
+            $else:
+                <li><a href="/status/$i">$i</a></li>
+        $if page == count:
+            <li class="disabled"><a href="#">Next</a></li>
+        $else:
+            <li><a href="/status/${page+1}">Next</a></li>
+      </ul>
+    </div>
+  </caption>
   <thead>
     <tr>
       <th>Problem ID</th>

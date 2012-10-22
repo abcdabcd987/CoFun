@@ -43,14 +43,18 @@ class Problem(object):
         return db.insert("Problem", ProblemTitle=title, ProblemDescription=desc, ProblemInput=fin, ProblemOutput=fout, ProblemSampleIn=sin, ProblemSampleOut=sout, ProblemTime=time, ProblemMemory=memory, ProblemHint=hint, ProblemSource=source)
 
     @staticmethod
-    def GetList():
-        res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemSource"))
+    def GetList(offset, limit):
+        res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemSource", offset=offset, limit=limit))
         return None if len(res) == 0 else res
 
     @staticmethod
     def Get(problemid):
         res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemDescription, ProblemInput, ProblemOutput, ProblemSampleIn, ProblemSampleOut, ProblemTime, ProblemMemory, ProblemHint, ProblemSource", where="ProblemID="+str(problemid)))
         return None if len(res) == 0 else res[0]
+
+    @staticmethod
+    def Count():
+        return int(list(db.select("Problem", what="count(*)"))[0]["count(*)"])
 
     @staticmethod
     def Exist(problemid):
@@ -63,13 +67,17 @@ class Status(object):
         return db.insert("Submit", ProblemID=problemid, ContestID=contestid, UserID=userid, SubmitLanguage=lang, SubmitCode=code, CodeLength=len(code))
 
     @staticmethod
-    def GetList():
-        res = list(db.select("Submit, User", what="`SubmitID` ,  `ProblemID` ,  `ContestID` ,  `SubmitTime` ,  `SubmitLanguage` ,  `SubmitCode` ,  `SubmitStatus` ,  `SubmitRunTime` ,  `SubmitRunMemory` , `CodeLength` ,  `JudgeTime` ,  `CompilerInfo` ,  `UserName`", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC"))
+    def Count():
+        return int(list(db.select("Submit", what="count(*)"))[0]["count(*)"])
+
+    @staticmethod
+    def GetList(offset, limit):
+        res = list(db.select("Submit, User", what="`SubmitID` ,  `ProblemID` ,  `ContestID` ,  `SubmitTime` ,  `SubmitLanguage` ,  `SubmitCode` ,  `SubmitStatus` ,  `SubmitRunTime` ,  `SubmitRunMemory` , `CodeLength` ,  `JudgeTime` ,  `CompilerInfo` ,  `UserName`", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC", offset=offset, limit=limit))
         return None if len(res) == 0 else res
 
     @staticmethod
     def Detail(submitid):
-        res1 = list(db.select("Result", what="Result, RunTime, RunMemory", where="SubmitID="+str(submitid), order="ResultID DESC"));
+        res1 = list(db.select("Result", what="Result, RunTime, RunMemory", where="SubmitID="+str(submitid)));
         res2 = list(db.select("Submit", where="SubmitID="+str(submitid)));
         res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
         return (None, None, None, None) if not res2 else (res1, res2[0], res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])

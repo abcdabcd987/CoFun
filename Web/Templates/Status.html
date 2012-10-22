@@ -1,5 +1,6 @@
-$def with (status)
+$def with (status, page, count)
 $var title: Status
+$var refresh: 10
 $code:
     ALERTLIST = {
         0:      None,
@@ -12,7 +13,21 @@ $code:
         7:      'alert',
     }
 <table class="table table-hover">
-  <caption><h2>Status</h2></caption>
+  <caption>
+    <h2>Status</h2>
+    <div class="pagination">
+      <ul>
+        $if page == 1:
+            <li class="disabled"><a href="#">Prev</a></li>
+        $else:
+            <li><a href="/status/${page-1}">Prev</a></li>
+        $if page == count:
+            <li class="disabled"><a href="#">Next</a></li>
+        $else:
+            <li><a href="/status/${page+1}">Next</a></li>
+      </ul>
+    </div>
+  </caption>
   <thead>
     <tr>
       <th class="span1">#</th>
@@ -50,3 +65,15 @@ $code:
         </tr>
   </tbody>
 </table>
+<div class="pagination">
+  <ul>
+    $if page == 1:
+        <li class="disabled"><a href="#">Prev</a></li>
+    $else:
+        <li><a href="/status/${page-1}">Prev</a></li>
+    $if page == count:
+        <li class="disabled"><a href="#">Next</a></li>
+    $else:
+        <li><a href="/status/${page+1}">Next</a></li>
+  </ul>
+</div>

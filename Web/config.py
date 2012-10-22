@@ -3,13 +3,15 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 11'
+VERSION = '0.1 git commit 12'
 
 CONFIG = {
     'dbtype':       'mysql',
     'dbuser':       'root',
     'dbpasswd':     '123456',
     'dbname':       'cofun',
+    'statusrows':   25,
+    'problemrows':  30,
 }
 
 RESULTLIST = {
@@ -44,7 +46,7 @@ urls = (
 )
 
 web.config.session_parameters['cookie_name'] = 'cofun_session'
-web.config.session_parameters['timeout'] = 86400
+web.config.session_parameters['timeout'] = 3600*24*7
 web.config.session_parameters['ignore_expiry'] = True
 web.config.session_parameters['ignore_change_ip'] = True
 web.config.session_parameters['secret_key'] = 'fL|Christiana@fxqXtfN%Blake(ldA0A0J'
