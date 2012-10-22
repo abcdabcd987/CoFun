@@ -37,6 +37,11 @@ class Member(object):
         else:
             return db.insert("User", UserName=username, UserEmail=useremail, UserPassword=Utility.SHA1(userpwd))
 
+    @staticmethod
+    def GetLastLanguage(userid):
+        res = list(db.select("Submit", what="SubmitLanguage", limit=1, where="UserID="+str(userid), order="SubmitID DESC"))
+        return res[0]['SubmitLanguage'] if res else None
+
 class Problem(object):
     @staticmethod
     def Add(title, desc, fin, fout, sin, sout, time, memory, hint, source):

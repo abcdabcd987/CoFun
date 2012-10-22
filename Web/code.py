@@ -142,7 +142,8 @@ class Submit:
     def GET(self, problemid):
         if session.userid == -1:
             raise web.seeother('/')
-        return render.Submit(problemid)
+        lang = db.Member.GetLastLanguage(session.userid)
+        return render.Submit(problemid, lang)
 
     def POST(self, arg):
         if session.userid == -1:

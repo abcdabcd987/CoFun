@@ -1,4 +1,4 @@
-$def with (problemid, mesg=None)
+$def with (problemid, lang=None, mesg=None)
 $var title: Submit
 <form method="POST" action="/submit/" name="SubmitForm" class="form-horizontal">
   <legend>Submit</legend>
@@ -15,9 +15,18 @@ $var title: Submit
     <label for="SubmitLanguage" class="control-label">Language</label>
     <div class="controls">
     <select name="SubmitLanguage">
-      <option value="1">C</option>
-      <option value="2">C++</option>
-      <option value="3">Free Pascal</option>
+      $if lang == 1:
+          <option value="1" selected>C</option>
+      $else:
+          <option value="1">C</option>
+      $if lang == 2:
+          <option value="2" selected>C++</option>
+      $else:
+          <option value="2">C++</option>
+      $if lang == 3:
+          <option value="3" selected>Free Pascal</option>
+      $else:
+          <option value="3">Free Pascal</option>
     </select>
   </div>
   </div>

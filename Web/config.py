@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 12'
+VERSION = '0.1 git commit 13'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -28,7 +28,7 @@ RESULTLIST = {
 LANGUAGELIST = {
     1:      'C',
     2:      'C++',
-    3:      'Free Pascsl',
+    3:      'Free Pascal',
 }
 
 urls = (
