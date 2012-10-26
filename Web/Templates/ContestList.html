@@ -1,0 +1,52 @@
+$def with (contests, page, count)
+$var title: Contest List
+$code:
+    STATUS = {
+        1:    ('label label-success', 'Ready'),
+        2:    ('label label-warning', 'Live'),
+        3:    ('label', 'Done'),
+    }
+<table class="table table-hover">
+  <caption>
+    <h2>Contest List</h2>
+    <div class="pagination">
+      <ul>
+        $if page == 1:
+            <li class="disabled"><a href="#">Prev</a></li>
+        $else:
+            <li><a href="/contest/${page-1}">Prev</a></li>
+        $for i in xrange(1, count+1):
+            $if page == i:
+                <li class="active"><a href="/contest/$i">$i</a></li>
+            $else:
+                <li><a href="/contest/$i">$i</a></li>
+        $if page == count:
+            <li class="disabled"><a href="#">Next</a></li>
+        $else:
+            <li><a href="/contest/${page+1}">Next</a></li>
+      </ul>
+    </div>
+  </caption>
+  <thead>
+    <tr>
+      <th class="span1">#</th>
+      <th class="span1">Status</th>
+      <th class="span5">Title</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Principal</th>
+    </tr>
+  </thead>
+  <tbody>
+    $if contests:
+        $for contest in contests:
+            <tr>
+              <td>$contest.ContestID</td>
+              <td><span class="$STATUS[contest.ContestStatus][0]">$STATUS[contest.ContestStatus][1]</span></td>
+              <td><a href="/c$contest.ContestID">$contest.ContestTitle</a></td>
+              <td>$contest.ContestStartTime</td>
+              <td>$contest.ContestEndTime</td>
+              <td>$contest.ContestPrincipal</td>
+            </tr>
+  </tbody>
+</table>

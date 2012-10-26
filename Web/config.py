@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 13'
+VERSION = '0.1 git commit 14'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -23,6 +23,7 @@ RESULTLIST = {
     5:      '<span class="label label-inverse">Runtime Error</span>',
     6:      '<span class="label label-warning">Time Limit Exceeded</span>',
     7:      '<span class="label label-warning">Memory Limit Exceeded</span>',
+   -1:      '<span class="label">Hidden</span>',
 }
 
 LANGUAGELIST = {
@@ -37,12 +38,16 @@ urls = (
     '/login/(.*)',      'Login',
     '/logout/(.*)',     'Logout',
     '/problem/(.*)',    'ProblemList',
-    '/submit/(.*)',     'Submit',
+    '/submit/([\d]*)',     'Submit',
+    '/submit/(\d+)/(\d+)','Submit',
     '/newproblem/(.*)', 'NewProblem',
     '/p(.*)',           'Problem',
     '/status/(.*)',     'Status',
-    '/s(.*)',           'ShowSource',
-    '/layout','layout',
+    '/s(\d+)',          'ShowSource',
+    '/contest/(.*)',    'ContestList',
+    '/c(.*?)p(.*?)',    'ContestProblem',
+    '/c([^p]*)',        'Contest',
+    '/newcontest/(.*)', 'NewContest',
 )
 
 web.config.session_parameters['cookie_name'] = 'cofun_session'

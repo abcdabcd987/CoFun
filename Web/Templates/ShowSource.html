@@ -1,41 +1,45 @@
 $def with (detail, results, mem, time)
-<h1>Submit in detail</h1>
-<dl class="dl-horizontal">
-  <dt>Problem ID</dt><dd><a href="/p$detail.ProblemID">$detail.ProblemID</a></dd>
-  <dt>User</dt><dd>$detail.UserID</dd>
-  <dt>Average Memory</dt><dd>${mem}Kbytes</dd>
-  <dt>Time</dt><dd>${time}MS</dd>
-  <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
-  <dt>Result</dt><dd>$:RESULTLIST[detail.SubmitStatus]</dd>
-</dl>
-$if results:
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Testcase</th>
-          <th>Result</th>
-          <th>Time</th>
-          <th>Memory</th>
-        </tr>
-      </thead>
-      <tbody>
-        $for r in results:
+$var title: Show Source
+$if not detail or detail.SubmitStatus == -1:
+    <h1>Hidden or Not Found</h1>
+$else:
+    <h1>Submit in detail</h1>
+    <dl class="dl-horizontal">
+      <dt>Problem ID</dt><dd><a href="/p$detail.ProblemID">$detail.ProblemID</a></dd>
+      <dt>User</dt><dd>$detail.UserID</dd>
+      <dt>Average Memory</dt><dd>${mem}Kbytes</dd>
+      <dt>Time</dt><dd>${time}MS</dd>
+      <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
+      <dt>Result</dt><dd>$:RESULTLIST[detail.SubmitStatus]</dd>
+    </dl>
+    $if results:
+        <table class="table table-hover">
+          <thead>
             <tr>
-              <td>$loop.index</td>
-              <td>$:RESULTLIST[r.Result]</td>
-              <td>${r.RunTime}ms</td>
-              <td>${r.RunMemory}KBytes</td>
+              <th>Testcase</th>
+              <th>Result</th>
+              <th>Time</th>
+              <th>Memory</th>
             </tr>
-      </tbody>
-    </table>
-$if detail.CompilerInfo:
-    <h2>Compile Info</h2>
-    <pre>$detail.CompilerInfo</pre>
-<h2>Source Code</h2>
-<pre class="prettyprint">$detail.SubmitCode</pre>
-<script src="/static/google-code-prettify/prettify.js"></script>
-<script>
-$$(window).load(function(){
-     prettyPrint();
-})
-</script>
+          </thead>
+          <tbody>
+            $for r in results:
+                <tr>
+                  <td>$loop.index</td>
+                  <td>$:RESULTLIST[r.Result]</td>
+                  <td>${r.RunTime}ms</td>
+                  <td>${r.RunMemory}KBytes</td>
+                </tr>
+          </tbody>
+        </table>
+    $if detail.CompilerInfo:
+        <h2>Compile Info</h2>
+        <pre>$detail.CompilerInfo</pre>
+    <h2>Source Code</h2>
+    <pre class="prettyprint">$detail.SubmitCode</pre>
+    <script src="/static/google-code-prettify/prettify.js"></script>
+    <script>
+    $$(window).load(function(){
+         prettyPrint();
+    })
+    </script>

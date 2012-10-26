@@ -1,5 +1,10 @@
-$def with (problemid, lang=None, mesg=None)
+$def with (problemid, contestid, lang=None, mesg=None)
 $var title: Submit
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$mesg</p>
+    </div>
 <form method="POST" action="/submit/" name="SubmitForm" class="form-horizontal">
   <legend>Submit</legend>
   <div class="control-group">
@@ -33,12 +38,8 @@ $var title: Submit
   <div>
     <textarea name="SubmitCode" class="big-textarea"></textarea>
   </div>
+  <input type="hidden" name="ContestID" value="$contestid">
   <div>
     <input type="submit" name="submit" value="Submit" class="btn btn-primary">
   </div>
 </form>
-$if mesg:
-    <div class="alert">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <strong>Warning!</strong><p>$mesg</p>
-    </div>

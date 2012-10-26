@@ -1,6 +1,7 @@
 import re
 import web
 import db
+import time
 import random
 from config import * 
 
@@ -139,26 +140,30 @@ class Problem:
         return render.Problem(db.Problem.Get(int(problemid)))
 
 class Submit:
-    def GET(self, problemid):
+    def GET(self, problemid, contestid=0):
         if session.userid == -1:
             raise web.seeother('/')
         lang = db.Member.GetLastLanguage(session.userid)
-        return render.Submit(problemid, lang)
+        return render.Submit(problemid, contestid, lang)
 
-    def POST(self, arg):
+    def POST(self, pid, cid=0):
         if session.userid == -1:
             raise web.seeother('/')
         i = web.input()
         problemid = i.get("ProblemID", None)
         language = i.get("SubmitLanguage", None)
         code = i.get("SubmitCode", None)
+        contestid = i.get("ContestID", 0)
+        lang = db.Member.GetLastLanguage(session.userid)
         if not language:
-            return render.Submit(problemid, 'Must select a language')
+            return render.Submit(problemid, contestid, lang, 'Must select a language')
         if not code:
-            return render.Submit(problemid, 'Must submit some code')
+            return render.Submit(problemid, contestid, lang, 'Must submit some code')
         if not problemid or not db.Problem.Exist(int(problemid)):
-            return render.Submit(problemid, 'Problem Does Not Exist')
-        db.Status.Submit(problemid, 0, session.userid, language, code)
+            return render.Submit(problemid, contestid, lang, 'Problem Does Not Exist')
+        if contestid != 0 and db.Contest.GetStatusByID(contestid) == 1:
+            return render.Submit(problemid, contestid, lang, 'Contest has not started yet')
+        db.Status.Submit(problemid, contestid, session.userid, language, code)
         raise web.seeother('/status/')
 
 class Status:
@@ -170,12 +175,124 @@ class Status:
         count = (db.Status.Count()+CONFIG['statusrows']-1)//CONFIG['statusrows']
         page = min(page, count)
         page = max(page, 1)
-        return render.Status(db.Status.GetList((page-1)*CONFIG['statusrows'], CONFIG['statusrows']), page, count)
+        lst = db.Status.GetList((page-1)*CONFIG['statusrows'], CONFIG['statusrows'])
+        for record in lst:
+            if record.ContestID != 0:
+                status = db.Contest.GetStatusByID(record.ContestID)
+                if status != 3:
+                    record.SubmitStatus = -1
+        return render.Status(lst, page, count)
 
 class ShowSource:
     def GET(self, submitid):
+        try:
+            submitid = int(submitid)
+        except:
+            submitid = -1
         (results, detail, avgmem, sumtime) = db.Status.Detail(int(submitid))
+        if detail.ContestID != 0:
+            status = db.Contest.GetStatusByID(detail.ContestID)
+            if status != 3:
+                detail.SubmitStatus = -1
         return render.ShowSource(detail, results, int(avgmem) if avgmem else 0, int(sumtime) if sumtime else 0)
+
+class NewContest:
+    def GET(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        return render.NewContest()
+    def POST(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        i = web.input()
+        title = i.get('ContestTitle', None)
+        stime = i.get('ContestStime', None)
+        etime = i.get('ContestEtime', None)
+        desc = i.get('ContestDescription', None)
+        prin = i.get('ContestPrincipal', None)
+        prob = i.get('ProblemList', None)
+        mesg = None
+        if not title or not vtitle.match(title):
+            mesg = 'Contest Title must be between 2 and 50 characters'
+        if not desc:
+            mesg = 'Contest Description can\'t be empty'
+        if not prin:
+            mesg = 'There must be one principal'
+        else:
+            userid = db.Member.GetID(prin)
+            if not userid:
+                mesg = '[%s] does NOT exist' % prin
+        if not prob:
+            mesg = 'There is no problem appointed'
+        try:
+            starttime = time.strptime(stime, '%Y-%m-%d %H:%M:%S')
+        except:
+            mesg = '[%s] is invaild' % stime
+        try:
+            endtime = time.strptime(etime, '%Y-%m-%d %H:%M:%S')
+        except:
+            mesg = '[%s] is invaild' % etime
+        if mesg:
+            return render.NewContest(mesg)
+
+        res = db.Contest.Add(title, stime, etime, desc, userid, prob.strip().split('|'))
+        if res:
+            return render.NewContest('Success! The new contest ID is: ' + str(res))
+        else:
+            return render.NewContest('Failed!')
+
+class ContestList:
+    def GET(self, arg):
+        try:
+            page = int(arg)
+        except:
+            page = 1
+        count = (db.Contest.Count()+CONFIG['problemrows']-1)//CONFIG['problemrows']
+        page = min(page, count)
+        page = max(page, 1)
+        res = db.Contest.GetList((page-1)*CONFIG['problemrows'], CONFIG['problemrows'])
+        for contest in res:
+            contest['ContestStatus'] = db.Contest.GetStatus(contest['ContestStartTime'], contest['ContestEndTime'])
+            username = db.Member.GetInfo(contest['ContestPrincipal'])
+            if not username:
+                username = '-1'
+            contest['ContestPrincipal'] = username['UserName']
+        return render.ContestList(res, page, count)
+
+class Contest:
+    def GET(self, contestid):
+        try:
+            contestid = int(contestid)
+        except:
+            contestid = 0
+        (contest, problem) = db.Contest.Get(contestid)
+        if not contest:
+            return render.Contest(None, None, None)
+        username = db.Member.GetInfo(contest.ContestPrincipal)
+        if not username:
+            username = 'empty'
+        contest.ContestPrincipal = username['UserName']
+        contest['ContestStatus'] = db.Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
+        return render.Contest(contest, problem)
+
+class ContestProblem:
+    def GET(self, contestid, problemid):
+        try:
+            contestid = int(contestid)
+            problemid = int(problemid)
+        except:
+            contestid = 0
+            problemid = 0
+        (contest, problem) = db.Contest.GetProblem(contestid, problemid)
+        if not contest or not problem:
+            return render.ContestProblem(None, None)
+        username = db.Member.GetInfo(contest.ContestPrincipal)
+        if not username:
+            username = 'empty'
+        contest.ContestPrincipal = username['UserName']
+        contest['ContestStatus'] = db.Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
+        return render.ContestProblem(contest, problem)
+        #return problem
 
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,44 @@
+$def with (contest, problems)
+$code:
+    CONTESTSTATUS = {
+        1:    ('label label-success', 'Ready'),
+        2:    ('label label-warning', 'Live'),
+        3:    ('label', 'Done'),
+    }
+$if contest:
+    $var title: $contest.ContestTitle - Contest $contest.ContestID
+    <h1>$contest.ContestTitle</h1>
+    <dl class="dl-horizontal">
+      <dt>Start Time</dt>
+      <dd>$contest.ContestStartTime</dd>
+      <dt>End Time</dt>
+      <dd>$contest.ContestEndTime</dd>
+      <dt>Status</dt>
+      <dd><span class="$CONTESTSTATUS[contest.ContestStatus][0]">$CONTESTSTATUS[contest.ContestStatus][1]</span></dd>
+      <dt>Principal</dt>
+      <dd>$contest.ContestPrincipal</dd>
+      <dt>Description</dt>
+      <dd><pre>$contest.ContestDescription</pre></dd>
+    </dl>
+    <table class="table table-hover">
+      <caption>
+        <h2>Problems</h2>
+      </caption>
+      <thead>
+        <tr>
+          <th class="span1">#</th>
+          <th>Problem</th>
+        </tr>
+      </thead>
+      <tbody>
+        $if problems and contest.ContestStatus != 1:
+            $for prob in problems:
+                <tr>
+                  <td>$loop.index</td>
+                  <td><a href="/c${contest.ContestID}p$prob.ProblemID#showproblem">$prob.ProblemTitle</a></td>
+                </tr>
+      </tbody>
+    </table>
+$else:
+    $var title: Not Found the Contest
+    <h1>Not Found the Contest</h1>

@@ -1,6 +1,7 @@
 import web
 import time
 import hashlib
+import datetime
 from config import CONFIG
 
 db = web.database(dbn=CONFIG['dbtype'], user=CONFIG['dbuser'], pw=CONFIG['dbpasswd'], db=CONFIG['dbname'])
@@ -86,6 +87,64 @@ class Status(object):
         res2 = list(db.select("Submit", where="SubmitID="+str(submitid)));
         res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
         return (None, None, None, None) if not res2 else (res1, res2[0], res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])
+
+class Contest(object):
+    @staticmethod
+    def Add(title, stime, etime, desc, prin, probs):
+        cid = db.insert("Contest", ContestTitle=title, ContestStartTime=stime, ContestEndTime=etime, ContestDescription=desc, ContestPrincipal=prin)
+        for prob in probs:
+            try:
+                p = int(prob)
+            except:
+                p = 0
+            if p >= 1000:
+                db.insert("ContestProblem", ContestID=cid, ProblemID=p)
+        return cid
+
+    @staticmethod
+    def Get(cid):
+        contest = db.select("Contest", where="ContestID="+str(cid))
+        prob = db.select("ContestProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="ContestProblem.ContestID="+str(cid)+" AND Problem.ProblemID=ContestProblem.ProblemID")
+        if not contest:
+            return (None, None)
+        else:
+            return (list(contest)[0], list(prob)) if prob else (list(contest)[0], None)
+
+    @staticmethod
+    def GetProblem(cid, pid):
+        contest = db.select("Contest", where="ContestID="+str(cid))
+        prob = db.select("ContestProblem, Problem", what="Problem.*", where="ContestProblem.ContestID="+str(cid)+" AND Problem.ProblemID=ContestProblem.ProblemID AND Problem.ProblemID="+str(pid))
+        if not contest or not prob:
+            return (None, None)
+        else:
+            return (list(contest)[0], list(prob)[0])
+
+    @staticmethod
+    def GetList(offset, limit):
+        res = list(db.select("Contest", offset=offset, limit=limit, order="ContestID DESC"))
+        return None if len(res) == 0 else res
+
+    @staticmethod
+    def Count():
+        return int(list(db.select("Problem", what="count(*)"))[0]["count(*)"])
+
+    @staticmethod
+    def GetStatus(stime, etime):
+        now = datetime.datetime.now()
+        if stime > now:
+            return 1
+        elif stime <= now <= etime:
+            return 2
+        else:
+            return 3
+
+    @staticmethod
+    def GetStatusByID(cid):
+        contest = db.select("Contest", where="ContestID="+str(cid))
+        if not contest:
+            return 3
+        contest = list(contest)[0]
+        return Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
 
 #print Member.Add('test7', 'T7', 'test7@test.com')
 #print Member.GetPassword(Member.GetID('test7'))

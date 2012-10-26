@@ -1,0 +1,47 @@
+$def with (mesg=None)
+$var title: Add a Contest
+$if mesg:
+    <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>INFO</strong><p>$mesg</p>
+    </div>
+<form method="POST" action="/newcontest/" name="NewContestForm" class="form-horizontal">
+  <legend>Add a Contest</legend>
+  <div class="control-group">
+    <label for="ContestTitle" class="control-label">Title</label>
+    <div class="controls">
+      <input type="text" id="ContestTitle" name="ContestTitle" placeholder="Contest Title">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="ContestStime">Start Time</label>
+    <div class="controls">
+      <input type="text" id="ContestStime" name="ContestStime" placeholder="yyyy-mm-dd hh:mm:ss">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="ContestEtime">End Time</label>
+    <div class="controls">
+      <input type="text" id="ContestEtime" name="ContestEtime" placeholder="yyyy-mm-dd hh:mm:ss">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="ContestPrincipal" class="control-label">Principal</label>
+    <div class="controls">
+      <input type="text" id="ContestPrincipal" name="ContestPrincipal" value="$session.username">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="ProblemList" class="control-label">Problems</label>
+    <div class="controls">
+      <input type="text" id="ProblemList" name="ProblemList" placeholder="e.g. 1000|1003|1034|1111">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="ContestDescription">Description</label>
+    <textarea class="big-textarea" id="ContestDescription" name="ContestDescription"></textarea>
+  </div>
+  <div>
+    <input type="submit" id="submit" name="submit" value="Add" class="btn btn-primary">
+  </div>
+</form>

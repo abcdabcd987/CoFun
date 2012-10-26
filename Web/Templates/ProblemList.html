@@ -8,16 +8,16 @@ $var title: Problemlist
         $if page == 1:
             <li class="disabled"><a href="#">Prev</a></li>
         $else:
-            <li><a href="/status/${page-1}">Prev</a></li>
+            <li><a href="/problem/${page-1}">Prev</a></li>
         $for i in xrange(1, count+1):
             $if page == i:
-                <li class="active"><a href="/status/$i">$i</a></li>
+                <li class="active"><a href="/problem/$i">$i</a></li>
             $else:
-                <li><a href="/status/$i">$i</a></li>
+                <li><a href="/problem/$i">$i</a></li>
         $if page == count:
             <li class="disabled"><a href="#">Next</a></li>
         $else:
-            <li><a href="/status/${page+1}">Next</a></li>
+            <li><a href="/problem/${page+1}">Next</a></li>
       </ul>
     </div>
   </caption>
