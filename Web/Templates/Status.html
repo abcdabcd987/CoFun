@@ -35,6 +35,7 @@ $code:
       <th>User</th>
       <th>Problem</th>
       <th>Result</th>
+      <th>Score</th>
       <th>Memory</th>
       <th>Time</th>
       <th>Language</th>
@@ -53,16 +54,20 @@ $code:
           <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
           <td><a href="/s$s.SubmitID">$:RESULTLIST[s.SubmitStatus]</a></td>
           $if s.SubmitStatus > 1:
+              <td>$s.SubmitScore</td>
               <td>${s.SubmitRunMemory}KB</td>
-          $else:
-              <td></td>
-          $if s.SubmitStatus > 1:
               <td>${s.SubmitRunTime}MS</td>
           $else:
               <td></td>
+              <td></td>
+              <td></td>
           <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
-          <td>${s.CodeLength}B</td>
-          <td>$s.SubmitTime</td>
+          $if s.SubmitStatus > 1:
+              <td>${s.CodeLength}B</td>
+              <td>$s.SubmitTime</td>
+          $else:
+              <td></td>
+              <td></td>
         </tr>
   </tbody>
 </table>

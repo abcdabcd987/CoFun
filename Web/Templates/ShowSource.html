@@ -11,6 +11,7 @@ $else:
       <dt>Time</dt><dd>${time}MS</dd>
       <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
       <dt>Result</dt><dd>$:RESULTLIST[detail.SubmitStatus]</dd>
+      <dt>Score</dt><dd>$detail.SubmitScore</dd>
     </dl>
     $if results:
         <table class="table table-hover">
@@ -18,6 +19,7 @@ $else:
             <tr>
               <th>Testcase</th>
               <th>Result</th>
+              <th>Score</th>
               <th>Time</th>
               <th>Memory</th>
             </tr>
@@ -27,6 +29,7 @@ $else:
                 <tr>
                   <td>$loop.index</td>
                   <td>$:RESULTLIST[r.Result]</td>
+                  <td>$r.Score</td>
                   <td>${r.RunTime}ms</td>
                   <td>${r.RunMemory}KBytes</td>
                 </tr>

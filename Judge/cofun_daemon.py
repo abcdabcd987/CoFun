@@ -66,6 +66,7 @@ def Process(tasks):
         if not compile_success:
             print '%s  CE' % task['SubmitID']
             cur.execute('UPDATE Submit SET SubmitStatus=%s, JudgeTime=CURRENT_TIMESTAMP WHERE SubmitID=%s', (RESULT['CE'], task['SubmitID']))
+            print '%s  -----------------------DONE------------------------' % task['SubmitID']
             continue
 
         basedir = '/home/cofun/data/%d/' % task['ProblemID']
@@ -73,6 +74,7 @@ def Process(tasks):
         tottime = 0
         avgmem = 0
         memcnt = 0
+        totscored = 0
         for line in open(basedir + 'data.config'):
             config = line.strip().split('|')
             if not config:
@@ -82,6 +84,7 @@ def Process(tasks):
             # config[1]:  output file
             # config[2]:  time limit
             # config[3]:  memory limit
+            # config[4]:  score
             shutil.copyfile(basedir+config[0], '/home/cofun/tmp/input.txt')
             os.system('/home/cofun/cofun_client '+config[2]+' '+config[3])
 
@@ -111,10 +114,12 @@ def Process(tasks):
                     #print diff
                 else:
                     res = 'AC'
+            score = config[4] if res == 'AC' else '0'
+            totscored += float(score)
 
             print '[%s]%s  on testcase [%s]  %3s  at %4dms  using %7dKBytes memory   with exitcode: %3d' % (time.strftime('%Y-%m-%d %X', time.localtime()), task['SubmitID'], config[0], res, int(result[1]), int(result[2]), int(result[3]))
-            cur.execute('INSERT INTO Result (SubmitID, Result, RunTime, RunMemory, Diff) VALUES (%s, %s, %s, %s, %s)', (task['SubmitID'], RESULT[res], result[1], result[2], diff))
-        cur.execute('UPDATE Submit SET SubmitStatus=%s, JudgeTime=CURRENT_TIMESTAMP, SubmitRunTime=%s, SubmitRunMemory=%s WHERE SubmitID=%s', (RESULT[final], str(tottime), str(avgmem//memcnt), task['SubmitID']))
+            cur.execute('INSERT INTO Result (SubmitID, Result, RunTime, RunMemory, Score, Diff) VALUES (%s, %s, %s, %s, %s, %s)', (task['SubmitID'], RESULT[res], result[1], result[2], score, diff))
+        cur.execute('UPDATE Submit SET SubmitStatus=%s, JudgeTime=CURRENT_TIMESTAMP, SubmitRunTime=%s, SubmitRunMemory=%s, SubmitScore=%s WHERE SubmitID=%s', (RESULT[final], str(tottime), str(avgmem//memcnt), totscored, task['SubmitID']))
 
         print '%s  -----------------------DONE------------------------' % task['SubmitID']
 

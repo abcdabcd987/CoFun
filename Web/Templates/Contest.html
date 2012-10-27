@@ -20,6 +20,12 @@ $if contest:
       <dt>Description</dt>
       <dd><pre>$contest.ContestDescription</pre></dd>
     </dl>
+    <div>
+      $if contest.ContestStatus == 3:
+          <a class="btn btn-danger" href="/cr$contest.ContestID#rank">Rank</a>
+      $else:
+          <button class="btn">Rank</button>
+    </div>
     <table class="table table-hover">
       <caption>
         <h2>Problems</h2>

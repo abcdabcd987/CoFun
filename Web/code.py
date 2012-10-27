@@ -137,6 +137,12 @@ class ProblemList:
 
 class Problem:
     def GET(self, problemid):
+        try:
+            problemid = int(problemid)
+        except:
+            problemid = 0
+        if db.Contest.IsProblemNotDone(problemid):
+            return render.Problem(None)
         return render.Problem(db.Problem.Get(int(problemid)))
 
 class Submit:
@@ -150,7 +156,7 @@ class Submit:
         if session.userid == -1:
             raise web.seeother('/')
         i = web.input()
-        problemid = i.get("ProblemID", None)
+        problemid = i.get("ProblemID", 0)
         language = i.get("SubmitLanguage", None)
         code = i.get("SubmitCode", None)
         contestid = i.get("ContestID", 0)
@@ -163,6 +169,8 @@ class Submit:
             return render.Submit(problemid, contestid, lang, 'Problem Does Not Exist')
         if contestid != 0 and db.Contest.GetStatusByID(contestid) == 1:
             return render.Submit(problemid, contestid, lang, 'Contest has not started yet')
+        if db.Contest.IsProblemNotDone(problemid, int(contestid)):
+            return render.Submit(problemid, contestid, lang, 'Problem Does Not Exist or Hidden')
         db.Status.Submit(problemid, contestid, session.userid, language, code)
         raise web.seeother('/status/')
 
@@ -182,6 +190,7 @@ class Status:
                 if status != 3:
                     record.SubmitStatus = -1
         return render.Status(lst, page, count)
+        #return lst
 
 class ShowSource:
     def GET(self, submitid):
@@ -251,12 +260,13 @@ class ContestList:
         page = min(page, count)
         page = max(page, 1)
         res = db.Contest.GetList((page-1)*CONFIG['problemrows'], CONFIG['problemrows'])
-        for contest in res:
-            contest['ContestStatus'] = db.Contest.GetStatus(contest['ContestStartTime'], contest['ContestEndTime'])
-            username = db.Member.GetInfo(contest['ContestPrincipal'])
-            if not username:
-                username = '-1'
-            contest['ContestPrincipal'] = username['UserName']
+        if res:
+            for contest in res:
+                contest['ContestStatus'] = db.Contest.GetStatus(contest['ContestStartTime'], contest['ContestEndTime'])
+                username = db.Member.GetInfo(contest['ContestPrincipal'])
+                if not username:
+                    username = '-1'
+                contest['ContestPrincipal'] = username['UserName']
         return render.ContestList(res, page, count)
 
 class Contest:
@@ -292,7 +302,26 @@ class ContestProblem:
         contest.ContestPrincipal = username['UserName']
         contest['ContestStatus'] = db.Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
         return render.ContestProblem(contest, problem)
-        #return problem
+
+class ContestRank:
+    def GET(self, contestid):
+        try:
+            contestid = int(contestid)
+        except:
+            contestid = -1
+        (contest, problem) = db.Contest.Get(contestid)
+        if not contest:
+            return render.ContestRank(None, None)
+        if db.Contest.GetStatusByID(contestid) != 3:
+            return render.ContestRank(None, None)
+        username = db.Member.GetInfo(contest.ContestPrincipal)
+        if not username:
+            username = 'empty'
+        contest.ContestPrincipal = username['UserName']
+        contest['ContestStatus'] = db.Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
+
+        rank = db.Contest.GetRank(contestid)
+        return render.ContestRank(contest, rank)
 
 if __name__ == '__main__':
     app.run()

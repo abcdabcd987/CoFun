@@ -78,15 +78,23 @@ class Status(object):
 
     @staticmethod
     def GetList(offset, limit):
-        res = list(db.select("Submit, User", what="`SubmitID` ,  `ProblemID` ,  `ContestID` ,  `SubmitTime` ,  `SubmitLanguage` ,  `SubmitCode` ,  `SubmitStatus` ,  `SubmitRunTime` ,  `SubmitRunMemory` , `CodeLength` ,  `JudgeTime` ,  `CompilerInfo` ,  `UserName`", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC", offset=offset, limit=limit))
+        res = list(db.select("Submit, User", what="SubmitID, Submit.UserID, User.UserName, ProblemID, ContestID, SubmitStatus, SubmitScore, SubmitRunMemory, SubmitRunTime, SubmitLanguage, CodeLength, SubmitTime", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC", offset=offset, limit=limit))
+        if res:
+            for submit in res:
+                submit.SubmitScore = "%3.1f" % float(submit.SubmitScore)
         return None if len(res) == 0 else res
 
     @staticmethod
     def Detail(submitid):
-        res1 = list(db.select("Result", what="Result, RunTime, RunMemory", where="SubmitID="+str(submitid)));
+        res1 = list(db.select("Result", what="Result, RunTime, RunMemory, Score", where="SubmitID="+str(submitid)));
         res2 = list(db.select("Submit", where="SubmitID="+str(submitid)));
         res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
-        return (None, None, None, None) if not res2 else (res1, res2[0], res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])
+        if res2:
+            res2 = res2[0]
+            res2.SubmitScore = '%3.1f' % res2.SubmitScore
+            for testcase in res1:
+                testcase.Score = '%3.1f' % testcase.Score
+        return (None, None, None, None) if not res2 else (res1, res2, res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])
 
 class Contest(object):
     @staticmethod
@@ -145,6 +153,33 @@ class Contest(object):
             return 3
         contest = list(contest)[0]
         return Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
+
+    @staticmethod
+    def IsProblemNotDone(pid, cid=0):
+        contests = db.select("ContestProblem", where="ProblemID="+str(pid))
+        if not contests:
+            return False
+        for contest in contests:
+            if contest.ContestID == cid:
+                return False
+            if Contest.GetStatusByID(contest.ContestID) != 3:
+                return True
+        return False
+
+    @staticmethod
+    def GetRank(cid):
+        res = db.select('(SELECT * FROM (SELECT UserID, ProblemID, SubmitScore FROM Submit WHERE ContestID='+str(cid)+' ORDER BY SubmitID DESC) as tmp1 GROUP BY UserID, ProblemID) as tmp2, User', what='tmp2.UserID, UserName, SUM(SubmitScore) AS Score', where='tmp2.UserID=User.UserID', group='UserID', order='Score DESC')
+        return list(res) if res else None
+        #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score FROM
+        #(
+        #  SELECT *
+        #  FROM 
+        #  (
+        #    SELECT UserID, ProblemID, SubmitScore FROM Submit WHERE ContestID=1000 ORDER BY SubmitID DESC
+        #  ) as tmp1
+        #  GROUP BY UserID, ProblemID
+        #) as tmp2, User
+        #WHERE tmp2.UserID=User.UserID GROUP BY UserID ORDER BY Score DESC
 
 #print Member.Add('test7', 'T7', 'test7@test.com')
 #print Member.GetPassword(Member.GetID('test7'))

@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 14'
+VERSION = '0.1 git commit 15'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -38,15 +38,16 @@ urls = (
     '/login/(.*)',      'Login',
     '/logout/(.*)',     'Logout',
     '/problem/(.*)',    'ProblemList',
-    '/submit/([\d]*)',     'Submit',
+    '/submit/(\d*)',     'Submit',
     '/submit/(\d+)/(\d+)','Submit',
     '/newproblem/(.*)', 'NewProblem',
-    '/p(.*)',           'Problem',
-    '/status/(.*)',     'Status',
+    '/p(\d+)',           'Problem',
+    '/status/(\d*)',     'Status',
     '/s(\d+)',          'ShowSource',
-    '/contest/(.*)',    'ContestList',
-    '/c(.*?)p(.*?)',    'ContestProblem',
-    '/c([^p]*)',        'Contest',
+    '/contest/(\d*)',    'ContestList',
+    '/c(\d+)p(.\d+)',   'ContestProblem',
+    '/c(\d+)',        'Contest',
+    '/cr(\d+)',         'ContestRank',
     '/newcontest/(.*)', 'NewContest',
 )
 

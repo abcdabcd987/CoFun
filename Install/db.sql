@@ -4,9 +4,10 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `Contest` (
   `ContestID` int(9) NOT NULL AUTO_INCREMENT,
   `ContestTitle` varchar(130) NOT NULL,
-  `ContestStartTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ContestStartTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ContestEndTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ContestDescription` text NOT NULL,
+  `ContestPrincipal` int(11) NOT NULL,
   PRIMARY KEY (`ContestID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `Result` (
   `Result` tinyint(4) NOT NULL,
   `RunTime` int(9) NOT NULL,
   `RunMemory` int(9) NOT NULL,
+  `Score` decimal(6,2) NOT NULL,
   `Diff` text NOT NULL,
   PRIMARY KEY (`ResultID`),
   KEY `sid` (`SubmitID`),
@@ -69,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `Submit` (
   `SubmitStatus` tinyint(4) NOT NULL,
   `SubmitRunTime` int(9) NOT NULL,
   `SubmitRunMemory` int(9) NOT NULL,
+  `SubmitScore` decimal(7,3) NOT NULL,
   `CodeLength` int(9) NOT NULL,
   `JudgeTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `CompilerInfo` text NOT NULL,
@@ -88,4 +91,3 @@ CREATE TABLE IF NOT EXISTS `User` (
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`),
   UNIQUE KEY `UserName_UNIQUE` (`UserName`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-

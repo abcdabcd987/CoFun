@@ -1,0 +1,49 @@
+$def with (contest, rank)
+$if contest:
+    $var title: Rank - $contest.ContestTitle - Contest $contest.ContestID
+    <h1>$contest.ContestTitle</h1>
+    <dl class="dl-horizontal">
+      <dt>Start Time</dt>
+      <dd>$contest.ContestStartTime</dd>
+      <dt>End Time</dt>
+      <dd>$contest.ContestEndTime</dd>
+      <dt>Status</dt>
+      <dd><span class="label">Done</span></dd>
+      <dt>Principal</dt>
+      <dd>$contest.ContestPrincipal</dd>
+      <dt>Description</dt>
+      <dd><pre>$contest.ContestDescription</pre></dd>
+    </dl>
+    <a name="rank"></a>
+    <div style="height:40px;"></div>
+    <table class="table table-hover">
+      <caption>
+        <h2>Contest Rank</h2>
+      </caption>
+      <thead>
+        <tr>
+          <th class="span1">#</th>
+          <th class="span2">User</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="status-table">
+        $if rank:
+            $for result in rank:
+                $if loop.index == 1:
+                    <tr class="alert alert-error">
+                $elif loop.index <= 3:
+                    <tr class="alert">
+                $elif loop.index <= 6:
+                    <tr class="alert alter-success">
+                $else:
+                    <tr>
+                  <td>$loop.index</td>
+                  <td>$result.UserName</td>
+                  <td>$result.Score</td>
+                </tr>
+      </tbody>
+    </table>
+$else:
+    $var title: Not Found the Contest or Hidden
+    <h1>Not Found the Contest or Hidden</h1>
