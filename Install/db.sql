@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `Contest` (
   `ContestStartTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ContestEndTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ContestDescription` text NOT NULL,
-  `ContestPrincipal` int(11) NOT NULL,
+  `ContestPrincipal` int(9) NOT NULL,
   PRIMARY KEY (`ContestID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `ContestProblem` (
   KEY `pid` (`ProblemID`),
   KEY `order` (`ProblemOrder`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `Privilege` (
   `PrivilegeID` int(9) NOT NULL AUTO_INCREMENT,
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `Problem` (
   PRIMARY KEY (`ProblemID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1000 ;
 
+
 CREATE TABLE IF NOT EXISTS `Result` (
   `ResultID` int(9) NOT NULL AUTO_INCREMENT,
   `SubmitID` int(9) NOT NULL,
@@ -59,6 +61,28 @@ CREATE TABLE IF NOT EXISTS `Result` (
   KEY `time` (`RunTime`),
   KEY `memory` (`RunMemory`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+CREATE TABLE IF NOT EXISTS `Series` (
+  `SeriesID` int(11) NOT NULL AUTO_INCREMENT,
+  `SeriesTitle` varchar(130) NOT NULL,
+  `SeriesCreateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `SeriesDescription` text NOT NULL,
+  PRIMARY KEY (`SeriesID`),
+  KEY `createtime` (`SeriesCreateTime`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+CREATE TABLE IF NOT EXISTS `SeriesProblem` (
+  `SPID` int(11) NOT NULL AUTO_INCREMENT,
+  `SeriesID` int(11) NOT NULL,
+  `ProblemID` int(11) NOT NULL,
+  `ProblemOrder` int(11) NOT NULL,
+  PRIMARY KEY (`SPID`),
+  KEY `pid` (`ProblemID`),
+  KEY `sid` (`SeriesID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
 
 CREATE TABLE IF NOT EXISTS `Submit` (
   `SubmitID` int(9) NOT NULL AUTO_INCREMENT,
@@ -91,3 +115,4 @@ CREATE TABLE IF NOT EXISTS `User` (
   UNIQUE KEY `UserEmail_UNIQUE` (`UserEmail`),
   UNIQUE KEY `UserName_UNIQUE` (`UserName`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+

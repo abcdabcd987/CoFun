@@ -30,7 +30,12 @@ $else:
             $for r in results:
                 <tr>
                   <td>$loop.index</td>
-                  <td>$:RESULTLIST[r.Result]</td>
+                  <td>$:RESULTLIST[r.Result]
+                  $if r.Result == 4:
+                      <pre>
+                          $r.Diff
+                      </pre>
+                  </td>
                   <td>$r.Score</td>
                   <td>${r.RunTime}ms</td>
                   <td>${r.RunMemory}KBytes</td>

@@ -93,7 +93,7 @@ class Status(object):
 
     @staticmethod
     def Detail(submitid):
-        res1 = list(db.select("Result", what="Result, RunTime, RunMemory, Score", where="SubmitID="+str(submitid)));
+        res1 = list(db.select("Result", what="Result, RunTime, RunMemory, Score, Diff", where="SubmitID="+str(submitid)));
         res2 = list(db.select("Submit", where="SubmitID="+str(submitid)));
         res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
         if res2:

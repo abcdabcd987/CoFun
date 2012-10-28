@@ -5,8 +5,8 @@ import shutil
 import MySQLdb
 
 COMPILE_COMMAND = {
-    1:  'gcc __source.c -o __a.out -Wall',
-    2:  'g++ __source.cc -o __a.out -Wall',
+    1:  'gcc __source.c -m32 -o __a.out -Wall',
+    2:  'g++ __source.cc -m32 -o __a.out -Wall',
     3:  'fpc __source.pas -o__a.out -vewh -Tlinux',
 }
 COMPILE_REWRITE = ' 1> __compile_info.txt 2>&1'
@@ -43,7 +43,7 @@ def Compile(lang):
     return (os.path.exists('__a.out'), info)
 
 def GetDiff(ansfile):
-    exitcode = os.system('diff -awZB -C 5 output.txt ' + ansfile + ' > __diff.txt')
+    exitcode = os.system('/home/cofun/cofun_standard_check "%s" "%s" > __diff.txt' % (ansfile, 'output.txt'))
     diff = open('__diff.txt', 'r').read()
     return (exitcode, diff)
 
