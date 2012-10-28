@@ -351,5 +351,71 @@ class Upload:
             fout.close()
         return render.Upload('Done! See <code>http://cofun.org/static/probimg/'+filename+'</code>')
 
+
+###Series
+class NewSeries:
+    def GET(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        return render.NewSeries()
+    def POST(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        i = web.input()
+        title = i.get('SeriesTitle', None)
+        desc = i.get('SeriesDescription', None)
+        prob = i.get('ProblemList', None)
+        mesg = None
+        if not title or not vtitle.match(title):
+            mesg = 'Series Title must be between 2 and 50 characters'
+        if not desc:
+            mesg = 'Series Description can\'t be empty'
+        if not prob:
+            mesg = 'There is no problem appointed'
+        if mesg:
+            return render.NewSeries(mesg)
+
+        res = db.Series.Add(title, desc, prob.strip().split('|'))
+        if res:
+            return render.NewSeries('Success! The new series ID is: ' + str(res))
+        else:
+            return render.NewSeries('Failed!')
+
+class SeriesList:
+    def GET(self, arg):
+        try:
+            page = int(arg)
+        except:
+            page = 1
+        count = (db.Series.Count()+CONFIG['problemrows']-1)//CONFIG['problemrows']
+        page = min(page, count)
+        page = max(page, 1)
+        res = db.Series.GetList((page-1)*CONFIG['problemrows'], CONFIG['problemrows'])
+        return render.SeriesList(res, page, count)
+
+class Series:
+    def GET(self, seriesid):
+        try:
+            seriesid = int(seriesid)
+        except:
+            seriesid = 0
+        (series, problem) = db.Series.Get(seriesid)
+        if not series:
+            return render.Series(None, None, None)
+        return render.Series(series, problem)
+
+class SeriesRank:
+    def GET(self, seriesid):
+        try:
+            seriesid = int(seriesid)
+        except:
+            seriesid = -1
+        (series, problem) = db.Series.Get(seriesid)
+        if not series:
+            return render.SeriesRank(None, None)
+        rank = db.Series.GetRank(seriesid)
+        return render.SeriesRank(series, rank)
+
+
 if __name__ == '__main__':
     app.run()

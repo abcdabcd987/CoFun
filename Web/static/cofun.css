@@ -31,3 +31,7 @@ body {
 #status-table {
   font-weight: bold;
 }
+
+#status-table .progress {
+  margin-bottom: 0;
+}

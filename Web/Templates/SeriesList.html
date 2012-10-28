@@ -1,0 +1,40 @@
+$def with (series, page, count)
+$var title: Series List
+<table class="table table-hover">
+  <caption>
+    <h2>Series List</h2>
+    <div class="pagination">
+      <ul>
+        $if page == 1:
+            <li class="disabled"><a href="#">Prev</a></li>
+        $else:
+            <li><a href="/series/${page-1}">Prev</a></li>
+        $for i in xrange(1, count+1):
+            $if page == i:
+                <li class="active"><a href="/series/$i">$i</a></li>
+            $else:
+                <li><a href="/series/$i">$i</a></li>
+        $if page == count:
+            <li class="disabled"><a href="#">Next</a></li>
+        $else:
+            <li><a href="/series/${page+1}">Next</a></li>
+      </ul>
+    </div>
+  </caption>
+  <thead>
+    <tr>
+      <th class="span1">#</th>
+      <th>Title</th>
+      <th class="span2">Create Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    $if series:
+        $for ser in series:
+            <tr>
+              <td>$ser.SeriesID</td>
+              <td><a href="/series$ser.SeriesID">$ser.SeriesTitle</a></td>
+              <td>$ser.SeriesCreateTime</td>
+            </tr>
+  </tbody>
+</table>

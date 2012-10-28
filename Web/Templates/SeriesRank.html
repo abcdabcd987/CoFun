@@ -1,4 +1,4 @@
-$def with (contest, rank)
+$def with (series, rank)
 $code:
     COLOR = {
         0:    'danger',
@@ -7,26 +7,20 @@ $code:
         3:    'info',
     }
 
-$if contest:
-    $var title: Rank - $contest.ContestTitle - Contest $contest.ContestID
-    <h1>$contest.ContestTitle</h1>
+$if series:
+    $var title: Rank - $series.SeriesTitle - Series $series.SeriesID
+    <h1>$series.SeriesTitle</h1>
     <dl class="dl-horizontal">
-      <dt>Start Time</dt>
-      <dd>$contest.ContestStartTime</dd>
-      <dt>End Time</dt>
-      <dd>$contest.ContestEndTime</dd>
-      <dt>Status</dt>
-      <dd><span class="label">Done</span></dd>
-      <dt>Principal</dt>
-      <dd>$contest.ContestPrincipal</dd>
+      <dt>Create Time</dt>
+      <dd>$series.SeriesCreateTime</dd>
       <dt>Description</dt>
-      <dd>$:contest.ContestDescription</dd>
+      <dd>$:series.SeriesDescription</dd>
     </dl>
     <a name="rank"></a>
     <div style="height:40px;"></div>
     <table class="table table-hover">
       <caption>
-        <h2>Contest Rank</h2>
+        <h2>Series Rank</h2>
       </caption>
       <thead>
         <tr>
@@ -46,13 +40,21 @@ $if contest:
                     $ c = COLOR[2]
                 $else:
                     $ c = COLOR[2]
+                $if session.userid == result.UserID:
+                    $ myself = ' active'
+                $else:
+                    $ myself = ''
+                <!--
+                  session.userid:  $session.userid
+                  result.UserID :  $result.UserID
+                -->
                 <tr class="alert alert-$c">
                   <td>$loop.index</td>
                   <td>$result.UserName</td>
-                  <td><div class="progress progress-$c progress-striped"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
+                  <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
                 </tr>
       </tbody>
     </table>
 $else:
-    $var title: Not Found the Contest or Hidden
-    <h1>Not Found the Contest or Hidden</h1>
+    $var title: Not Found the Series or Hidden
+    <h1>Not Found the Series or Hidden</h1>

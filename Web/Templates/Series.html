@@ -1,0 +1,35 @@
+$def with (series, problems)
+$if series:
+    $var title: $series.SeriesTitle - Series $series.SeriesID
+    <h1>$series.SeriesTitle</h1>
+    <dl class="dl-horizontal">
+      <dt>Create Time</dt>
+      <dd>$series.SeriesCreateTime</dd>
+      <dt>Description</dt>
+      <dd>$:series.SeriesDescription</dd>
+    </dl>
+    <div>
+      <a class="btn btn-danger" href="/series$series.SeriesID/rank#rank">Rank</a>
+    </div>
+    <table class="table table-hover">
+      <caption>
+        <h2>Problems</h2>
+      </caption>
+      <thead>
+        <tr>
+          <th class="span1">#</th>
+          <th>Problem</th>
+        </tr>
+      </thead>
+      <tbody>
+        $if problems:
+            $for prob in problems:
+                <tr>
+                  <td>$loop.index</td>
+                  <td><a href="/p$prob.ProblemID">$prob.ProblemTitle</a></td>
+                </tr>
+      </tbody>
+    </table>
+$else:
+    $var title: Not Found the Series
+    <h1>Not Found the Series</h1>

@@ -125,6 +125,7 @@ class Contest(object):
         else:
             contest = list(contest)[0]
             contest.ContestDescription = markdown2.markdown(contest.ContestDescription)
+            contest.FullScore = list(db.select("ContestProblem", what="COUNT(*) AS Count", where="ContestID="+str(cid)))[0]['Count']*100.0
             return (contest, list(prob)) if prob else (contest, None)
 
     @staticmethod
@@ -149,7 +150,7 @@ class Contest(object):
 
     @staticmethod
     def Count():
-        return int(list(db.select("Problem", what="count(*)"))[0]["count(*)"])
+        return int(list(db.select("Contest", what="count(*)"))[0]["count(*)"])
 
     @staticmethod
     def GetStatus(stime, etime):
@@ -196,6 +197,52 @@ class Contest(object):
         #) as tmp2, User
         #WHERE tmp2.UserID=User.UserID GROUP BY UserID ORDER BY Score DESC
 
-#print Member.Add('test7', 'T7', 'test7@test.com')
-#print Member.GetPassword(Member.GetID('test7'))
-#print Utility.SHA1('T7')
+class Series(object):
+    @staticmethod
+    def Add(title, desc, probs):
+        cid = db.insert("Series", SeriesTitle=title, SeriesDescription=desc)
+        for prob in probs:
+            try:
+                p = int(prob)
+            except:
+                p = 0
+            if p >= 1000:
+                db.insert("SeriesProblem", SeriesID=cid, ProblemID=p)
+        return cid
+
+    @staticmethod
+    def Get(cid):
+        series = db.select("Series", where="SeriesID="+str(cid))
+        prob = db.select("SeriesProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="SeriesProblem.SeriesID="+str(cid)+" AND Problem.ProblemID=SeriesProblem.ProblemID")
+        if not series:
+            return (None, None)
+        else:
+            series = list(series)[0]
+            series.SeriesDescription = markdown2.markdown(series.SeriesDescription)
+            series.FullScore = list(db.select("SeriesProblem", what="COUNT(*) AS Count", where="SeriesID="+str(cid)))[0]['Count']*100.0
+            return (series, list(prob)) if prob else (series, None)
+
+    @staticmethod
+    def GetList(offset, limit):
+        res = list(db.select("Series", offset=offset, limit=limit, order="SeriesID DESC"))
+        return None if len(res) == 0 else res
+
+    @staticmethod
+    def Count():
+        return int(list(db.select("Series", what="count(*)"))[0]["count(*)"])
+
+    @staticmethod
+    def GetRank(sid):
+        res = db.select('( SELECT ProblemId, SubmitScore, UserID FROM ( SELECT ProblemID, UserID, SubmitScore FROM Submit WHERE ProblemID IN ( SELECT ProblemID FROM SeriesProblem WHERE SeriesID='+str(sid)+') ORDER BY SubmitID DESC) AS tmp1 GROUP BY ProblemID, UserID) AS tmp2, User', what="tmp2.UserID, UserName, SUM(SubmitScore) AS Score", group='UserID', order='Score DESC', where="User.UserID=tmp2.UserID")
+        return list(res) if res else None
+        #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score FROM
+        #(
+        #  SELECT ProblemId, SubmitScore, UserID FROM
+        #  (
+        #    SELECT ProblemID, UserID, SubmitScore FROM Submit WHERE ProblemID IN 
+        #    (
+        #      SELECT ProblemID FROM SeriesProblem WHERE SeriesID=sid
+        #    ) ORDER BY SubmitID DESC
+        #  ) AS tmp1 GROUP BY ProblemID, UserID
+        #) AS tmp2, User WHERE User.UserID=tmp2.UserID GROUP BY UserID ORDER BY Score DESC ;
+

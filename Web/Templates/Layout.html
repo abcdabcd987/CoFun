@@ -42,23 +42,26 @@ $if 'head' in content:
           <li><a href="/">Home</a></li>
           <li><a href="/problem/">Problemlist</a></li>
           <li><a href="/contest/">Contest List</a></li>
+          <li><a href="/series/">Series List</a></li>
           <li><a href="/status/">Status</a></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="/newproblem/">Add a problem</a></li>
-              <li><a href="/newcontest/">Add a contest</a></li>
-              <!--<li class="divider"></li>
-              <li class="nav-header">Nav header</li>
-              <li><a href="#">Separated link</a></li>
-              <li><a href="#">One more separated link</a></li>-->
-            </ul>
-          </li>
+          $if session.userid != -1:
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="/newproblem/">Add a problem</a></li>
+                  <li><a href="/newcontest/">Add a contest</a></li>
+                  <li><a href="/newseries/">Add a series</a></li>
+                  <!--<li class="divider"></li>
+                  <li class="nav-header">Nav header</li>
+                  <li><a href="#">Separated link</a></li>
+                  <li><a href="#">One more separated link</a></li>-->
+                </ul>
+              </li>
         </ul>
         $if session.userid == -1:
             <form class="navbar-form pull-right" method="POST" action="/login/" name="LoginForm">
               <input class="span2" type="text" id="Username" name="Username" placeholder="Username">
-              <input class="span2" type="password" id="Password" name="Password" placeholder="Password">
+              <input class="span1" type="password" id="Password" name="Password" placeholder="Passwd">
               <button type="submit" class="btn">Login</button>
               <a href="/register/" class="btn">Register</a>
             </form>

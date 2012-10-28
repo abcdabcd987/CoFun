@@ -1,0 +1,46 @@
+$def with (mesg=None)
+$var title: Add a Series
+$var head:
+    <script src="/static/pagedown/Markdown.Converter.js"></script>
+    <script src="/static/pagedown/Markdown.Sanitizer.js"></script>
+    <script src="/static/pagedown/Markdown.Editor.js"></script>
+    <link href="/static/pagedown/pagedown.css" type="text/css" rel="stylesheet">
+$if mesg:
+    <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>INFO</strong><p>$mesg</p>
+    </div>
+<form method="POST" action="/newseries/" name="NewSeriesForm" class="form-horizontal">
+  <legend>Add a Series</legend>
+  <div class="control-group">
+    <label for="SeriesTitle" class="control-label">Title</label>
+    <div class="controls">
+      <input type="text" id="SeriesTitle" name="SeriesTitle" placeholder="Series Title">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="ProblemList" class="control-label">Problems</label>
+    <div class="controls">
+      <input type="text" id="ProblemList" name="ProblemList" placeholder="e.g. 1000|1003|1034|1111">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="SeriesDescription" class="biglabel">Description</label>
+    <div class="wmd-panel">
+      <div id="wmd-button-bar-desc"></div>
+      <textarea class="wmd-input" id="wmd-input-desc" name="SeriesDescription"></textarea>
+      <div id="wmd-preview-desc" class="wmd-panel wmd-preview"></div>
+    </div>
+  </div>
+  <div class="form-submit">
+    <input type="submit" id="submit" name="submit" value="Add" class="btn btn-primary">
+  </div>
+</form>
+<script>
+(function() {
+  var converter_desc = Markdown.getSanitizingConverter();
+  var editor_desc = new Markdown.Editor(converter_desc, '-desc');
+  editor_desc.run();
+}
+)();
+</script>
