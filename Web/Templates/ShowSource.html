@@ -1,5 +1,7 @@
 $def with (detail, results, mem, time)
 $var title: Show Source
+$var head: 
+    <link href="/static/google-code-prettify/prettify.css" type="text/css" rel="stylesheet">
 $if not detail or detail.SubmitStatus == -1:
     <h1>Hidden or Not Found</h1>
 $else:

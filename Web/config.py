@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 15'
+VERSION = '0.1 git commit 16'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -49,6 +49,8 @@ urls = (
     '/c(\d+)',        'Contest',
     '/cr(\d+)',         'ContestRank',
     '/newcontest/(.*)', 'NewContest',
+    '/whatsnew/(.*)',   'WhatsNew',
+    '/upload/(.*)',     'Upload',
 )
 
 web.config.session_parameters['cookie_name'] = 'cofun_session'

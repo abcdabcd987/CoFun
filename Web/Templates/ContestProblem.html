@@ -18,7 +18,7 @@ $if contest and problem:
       <dt>Principal</dt>
       <dd>$contest.ContestPrincipal</dd>
       <dt>Description</dt>
-      <dd><pre>$contest.ContestDescription</pre></dd>
+      <dd>$:contest.ContestDescription</dd>
     </dl>
     <a name="showproblem"></a>
     <div style="height:40px;"></div>
@@ -32,15 +32,15 @@ $if contest and problem:
     <a class="btn btn-primary" href="/submit/$problem.ProblemID/$contest.ContestID">Submit</a>
     <section>
       <h2>Description</h2>
-      <pre>$problem.ProblemDescription</pre>
+      <div class="markdown">$:problem.ProblemDescription</div>
     </section>
     <section>
       <h2>Input Format</h2>
-      <pre>$problem.ProblemInput</pre>
+      <div class="markdown">$:problem.ProblemInput</div>
     </section>
     <section>
       <h2>Output Format</h2>
-      <pre>$problem.ProblemOutput</pre>
+      <div class="markdown">$:problem.ProblemOutput</div>
     </section>
     <section>
       <h2>Sample Input</h2>

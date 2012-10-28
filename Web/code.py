@@ -1,6 +1,7 @@
 import re
 import web
 import db
+import zlib
 import time
 import random
 from config import * 
@@ -322,6 +323,33 @@ class ContestRank:
 
         rank = db.Contest.GetRank(contestid)
         return render.ContestRank(contest, rank)
+
+class WhatsNew:
+    def GET(self, arg):
+        return render.WhatsNew()
+
+class Upload:
+    def GET(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        return render.Upload()
+
+    def POST(self, arg):
+        if session.userid == -1:
+            raise web.seeother('/')
+        i = web.input(UploadFile={})
+        filedir = 'static/probimg/'
+        if 'UploadFile' in i:
+            filepath = i.UploadFile.filename.replace('\\', '/')
+            extension = filepath.split('/')[-1].split('.')[-1].lower()
+            if extension not in ('jpg', 'png', 'gif'):
+                return render.Upload('Must be a image')
+            rand = '%x' % (zlib.crc32(str(random.random())) & 0xffffffff)
+            filename = time.strftime('%Y%m%d_%H%M%S_'+rand+'.'+extension)
+            fout = open(filedir+'/'+filename, 'wb')
+            fout.write(i.UploadFile.file.read())
+            fout.close()
+        return render.Upload('Done! See <code>http://cofun.org/static/probimg/'+filename+'</code>')
 
 if __name__ == '__main__':
     app.run()

@@ -1,5 +1,10 @@
 $def with (mesg=None)
 $var title: Register
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$mesg</p>
+    </div>
 <form method="POST" action="/register/" name="RegisterForm" class="form-horizontal">
   <legend>Register</legend>
   <div class="control-group">
@@ -26,12 +31,7 @@ $var title: Register
       <input type="email" id="Email" name="Email" placeholder="Email(Only for avatar)">
     </div>
   </div>
-  <div>
+  <div class="form-submit">
     <input type="submit" id="submit" name="submit" value="Register" class="btn btn-primary">
   </div>
 </form>
-$if mesg:
-    <div class="alert">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <strong>Warning!</strong><p>$mesg</p>
-    </div>

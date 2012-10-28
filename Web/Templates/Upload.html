@@ -1,0 +1,19 @@
+$def with (mesg=None)
+$var title: Upload File
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert alert-info">×</button>
+      <strong>INFO:</strong><p>$:mesg</p>
+    </div>
+<form method="POST" enctype="multipart/form-data" action="/upload/" name="UploadForm" class="form-horizontal">
+  <legend>Register</legend>
+  <div class="control-group">
+    <label for="UploadFile" class="control-label">Image:</label>
+    <div class="controls">
+      <input type="file" id="UploadFile" name="UploadFile" placeholder="UploadFile">
+    </div>
+  </div>
+  <div class="form-submit">
+    <input type="submit" id="submit" name="submit" value="Upload" class="btn btn-primary">
+  </div>
+</form>

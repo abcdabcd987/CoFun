@@ -2,6 +2,7 @@ import web
 import time
 import hashlib
 import datetime
+import markdown2
 from config import CONFIG
 
 db = web.database(dbn=CONFIG['dbtype'], user=CONFIG['dbuser'], pw=CONFIG['dbpasswd'], db=CONFIG['dbname'])
@@ -55,8 +56,14 @@ class Problem(object):
 
     @staticmethod
     def Get(problemid):
-        res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemDescription, ProblemInput, ProblemOutput, ProblemSampleIn, ProblemSampleOut, ProblemTime, ProblemMemory, ProblemHint, ProblemSource", where="ProblemID="+str(problemid)))
-        return None if len(res) == 0 else res[0]
+        res = db.select("Problem", what="ProblemID, ProblemTitle, ProblemDescription, ProblemInput, ProblemOutput, ProblemSampleIn, ProblemSampleOut, ProblemTime, ProblemMemory, ProblemHint, ProblemSource", where="ProblemID="+str(problemid))
+        if not res:
+            return None
+        res = list(res)[0]
+        res.ProblemDescription = markdown2.markdown(res.ProblemDescription)
+        res.ProblemInput = markdown2.markdown(res.ProblemInput)
+        res.ProblemOutput = markdown2.markdown(res.ProblemOutput)
+        return res
 
     @staticmethod
     def Count():
@@ -116,7 +123,9 @@ class Contest(object):
         if not contest:
             return (None, None)
         else:
-            return (list(contest)[0], list(prob)) if prob else (list(contest)[0], None)
+            contest = list(contest)[0]
+            contest.ContestDescription = markdown2.markdown(contest.ContestDescription)
+            return (contest, list(prob)) if prob else (contest, None)
 
     @staticmethod
     def GetProblem(cid, pid):
@@ -125,7 +134,13 @@ class Contest(object):
         if not contest or not prob:
             return (None, None)
         else:
-            return (list(contest)[0], list(prob)[0])
+            contest = list(contest)[0]
+            contest.ContestDescription = markdown2.markdown(contest.ContestDescription)
+            prob = list(prob)[0]
+            prob.ProblemDescription = markdown2.markdown(prob.ProblemDescription)
+            prob.ProblemInput = markdown2.markdown(prob.ProblemInput)
+            prob.ProblemOutput = markdown2.markdown(prob.ProblemOutput)
+            return (contest, prob)
 
     @staticmethod
     def GetList(offset, limit):

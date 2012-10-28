@@ -12,10 +12,20 @@ body {
 }
 
 .big-textarea {
-  width: 500px;
+  width: 660px;
   height: 400px;
   margin-bottom: 13px;
   font-family: monospace;
+}
+
+.form-submit {
+  margin-top: 10px;
+}
+
+.biglabel {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 20px;
 }
 
 #status-table {
