@@ -17,8 +17,10 @@ int main(int argc, char* argv[])
   ifstream std(argv[1]);
   ifstream out(argv[2]);
   int h = 0;
-  while (std && out && getline(std, s1) && getline(out, s2))
+  while (std && out)
   {
+    bool flag = getline(std, s1);
+    flag = getline(out, s2) && flag;
     h++;
     int k = s1.length();
     while (k && s1[k - 1] == ' ') k--;
