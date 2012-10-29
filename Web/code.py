@@ -134,7 +134,7 @@ class ProblemList:
         count = (db.Problem.Count()+CONFIG['problemrows']-1)//CONFIG['problemrows']
         page = min(page, count)
         page = max(page, 1)
-        return render.ProblemList(db.Problem.GetList((page-1)*CONFIG['problemrows'], CONFIG['problemrows']), page, count)
+        return render.ProblemList(db.Problem.GetList((page-1)*CONFIG['problemrows'], CONFIG['problemrows'], session.userid), page, count)
 
 class Problem:
     def GET(self, problemid):
@@ -168,8 +168,8 @@ class Submit:
             return render.Submit(problemid, contestid, lang, 'Must submit some code')
         if not problemid or not db.Problem.Exist(int(problemid)):
             return render.Submit(problemid, contestid, lang, 'Problem Does Not Exist')
-        if contestid != 0 and db.Contest.GetStatusByID(contestid) == 1:
-            return render.Submit(problemid, contestid, lang, 'Contest has not started yet')
+        if contestid != 0 and db.Contest.GetStatusByID(contestid) != 2:
+            return render.Submit(problemid, contestid, lang, 'Contest is not LIVE')
         if db.Contest.IsProblemNotDone(problemid, int(contestid)):
             return render.Submit(problemid, contestid, lang, 'Problem Does Not Exist or Hidden')
         db.Status.Submit(problemid, contestid, session.userid, language, code)

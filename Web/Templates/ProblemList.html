@@ -1,5 +1,11 @@
 $def with (problems, page, count)
 $var title: Problemlist
+$code:
+    DONE = {
+        0:    ('', ''),
+        1:    ('<span class="label label-success">AC</span>', ' class="alert alert-success"'),
+        2:    ('<span class="label label-important">WA</span>', ' class="alert alert-error"'),
+    }
 <table class="table table-hover">
   <caption>
     <h2>Problemlist</h2>
@@ -24,14 +30,16 @@ $var title: Problemlist
   <thead>
     <tr>
       <th>Problem ID</th>
+      <th></th>
       <th>Title</th>
       <th>Source</th>
     </tr>
   </thead>
   <tbody>
     $for problem in problems:
-        <tr>
+        <tr$:DONE[problem.ProblemDone][1]>
           <td class="span2">$problem.ProblemID</td>
+          <td class="span1">$:DONE[problem.ProblemDone][0]</td>
           <td><a href="/p$problem.ProblemID">$problem.ProblemTitle</a></td>
           <td class="span4">$problem.ProblemSource</td>
         </tr>

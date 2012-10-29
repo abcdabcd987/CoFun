@@ -50,9 +50,30 @@ class Problem(object):
         return db.insert("Problem", ProblemTitle=title, ProblemDescription=desc, ProblemInput=fin, ProblemOutput=fout, ProblemSampleIn=sin, ProblemSampleOut=sout, ProblemTime=time, ProblemMemory=memory, ProblemHint=hint, ProblemSource=source)
 
     @staticmethod
-    def GetList(offset, limit):
+    def GetList(offset, limit, userid):
         res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemSource", offset=offset, limit=limit))
-        return None if len(res) == 0 else res
+        if not res:
+            return None
+        if userid == -1:
+            done = list()
+        else:
+            done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN ( SELECT * FROM (SELECT ProblemID FROM Problem LIMIT "+str(offset)+","+str(limit)+") AS tmp1)", order="ProblemID")
+        for i in res:
+            i.ProblemDone = 0
+            for j in done:
+                if i.ProblemID == j.ProblemID:
+                    if j.SubmitStatus == 3:
+                        i.ProblemDone = 1
+                        break
+                    else:
+                        i.ProblemDone = 2
+        return res
+
+#SELECT DISTINCT ProblemID, SubmitStatus FROM Submit 
+#WHERE UserID=%s AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN 
+#(
+#  SELECT * FROM (SELECT ProblemID FROM Problem LIMIT %s,%s) AS tmp1
+#) ORDER BY ProblemID
 
     @staticmethod
     def Get(problemid):
@@ -217,10 +238,29 @@ class Series(object):
         if not series:
             return (None, None)
         else:
+            done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN (SELECT ProblemID FROM SeriesProblem WHERE SeriesID="+cid+")", order="ProblemID")
+        if not prob:
+            prob = list()
+        else:
+            prob = list(prob)
+        for i in prob:
+            i.ProblemDone = 0
+            for j in done:
+                if i.ProblemID == j.ProblemID:
+                    if j.SubmitStatus == 3:
+                        i.ProblemDone = 1
+                        break
+                    else:
+                        i.ProblemDone = 2
+#SELECT DISTINCT ProblemID, SubmitStatus FROM Submit 
+#WHERE UserID=%s AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN 
+#(
+#  SELECT ProblemID FROM SeriesProblem WHERE SeriesID=%s
+#) ORDER BY ProblemID
             series = list(series)[0]
             series.SeriesDescription = markdown2.markdown(series.SeriesDescription)
             series.FullScore = list(db.select("SeriesProblem", what="COUNT(*) AS Count", where="SeriesID="+str(cid)))[0]['Count']*100.0
-            return (series, list(prob)) if prob else (series, None)
+            return (series, prob)
 
     @staticmethod
     def GetList(offset, limit):

@@ -1,4 +1,10 @@
 $def with (series, problems)
+$code:
+    DONE = {
+        0:    ('', ''),
+        1:    ('<span class="label label-success">AC</span>', ' class="alert alert-success"'),
+        2:    ('<span class="label label-important">WA</span>', ' class="alert alert-error"'),
+    }
 $if series:
     $var title: $series.SeriesTitle - Series $series.SeriesID
     <h1>$series.SeriesTitle</h1>
@@ -18,14 +24,17 @@ $if series:
       <thead>
         <tr>
           <th class="span1">#</th>
+          <th class="span1"></th>
           <th>Problem</th>
         </tr>
       </thead>
       <tbody>
         $if problems:
             $for prob in problems:
+                <tr$:DONE[prob.ProblemDone][1]>
                 <tr>
                   <td>$loop.index</td>
+                  <td>$:DONE[prob.ProblemDone][0]</td>
                   <td><a href="/p$prob.ProblemID">$prob.ProblemTitle</a></td>
                 </tr>
       </tbody>
