@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import re
 import web
 import db
@@ -161,6 +162,10 @@ class Submit:
         language = i.get("SubmitLanguage", None)
         code = i.get("SubmitCode", None)
         contestid = i.get("ContestID", 0)
+        try:
+            contestid = int(contestid)
+        except:
+            contestid = 0
         lang = db.Member.GetLastLanguage(session.userid)
         if not language:
             return render.Submit(problemid, contestid, lang, 'Must select a language')
@@ -410,7 +415,7 @@ class SeriesRank:
             seriesid = int(seriesid)
         except:
             seriesid = -1
-        (series, problem) = db.Series.Get(seriesid)
+        (series, problem) = db.Series.Get(seriesid, session.userid)
         if not series:
             return render.SeriesRank(None, None)
         rank = db.Series.GetRank(seriesid)

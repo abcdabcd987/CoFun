@@ -21,13 +21,15 @@ int main(int argc, char* argv[])
   {
     bool flag = getline(std, s1);
     flag = getline(out, s2) && flag;
+    if (!flag)
+      break;
     h++;
     int k = s1.length();
-    while (k && s1[k - 1] == ' ') k--;
+    while (k && (s1[k - 1] == ' ' || s1[k - 1] == '\r' || s1[k - 1] == '\n')) k--;
     s1 = s1.substr(0, k);
     
     k = s2.length();
-    while (k && s2[k - 1] == ' ') k--;
+    while (k && (s2[k - 1] == ' ' || s2[k - 1] == '\r' || s2[k - 1] == '\n')) k--;
     s2 = s2.substr(0, k);
     
     if (s1 != s2)

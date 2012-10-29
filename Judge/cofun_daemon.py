@@ -5,8 +5,8 @@ import shutil
 import MySQLdb
 
 COMPILE_COMMAND = {
-    1:  'gcc __source.c -m32 -o __a.out -Wall',
-    2:  'g++ __source.cc -m32 -o __a.out -Wall',
+    1:  'gcc __source.c -o __a.out -Wall',
+    2:  'g++ __source.cc -o __a.out -Wall',
     3:  'fpc __source.pas -o__a.out -vewh -Tlinux',
 }
 COMPILE_REWRITE = ' 1> __compile_info.txt 2>&1'
@@ -52,6 +52,7 @@ def Process(tasks):
         return
     for task in tasks:
         #print task
+        cur.execute('UPDATE Submit SET SubmitStatus=%s, JudgeTime=CURRENT_TIMESTAMP WHERE SubmitID=%s', (RESULT['RUN'], task['SubmitID']))
         os.chdir('/home/cofun/tmp')
         RemoveFiles()
         lang = task['SubmitLanguage']
@@ -94,7 +95,6 @@ def Process(tasks):
             # Exitcode    %d  (Exitcode or Signal code)
             result = open('/home/cofun/tmp/__result.txt', 'r').read().strip().split(' ')
             diff = result[3]
-            tottime += int(result[1])
             avgmem += int(result[2])
             memcnt += 1
             if int(result[1]) > int(config[2]):
@@ -114,6 +114,7 @@ def Process(tasks):
                     #print diff
                 else:
                     res = 'AC'
+                    tottime += int(result[1])
             score = config[4] if res == 'AC' else '0'
             totscored += float(score)
 

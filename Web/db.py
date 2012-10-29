@@ -58,6 +58,10 @@ class Problem(object):
             done = list()
         else:
             done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN ( SELECT * FROM (SELECT ProblemID FROM Problem LIMIT "+str(offset)+","+str(limit)+") AS tmp1)", order="ProblemID")
+            if done:
+                done = list(done)
+            else:
+                done = list()
         for i in res:
             i.ProblemDone = 0
             for j in done:
@@ -245,6 +249,7 @@ class Series(object):
             done = list()
         else:
             done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN (SELECT ProblemID FROM SeriesProblem WHERE SeriesID="+str(cid)+")", order="ProblemID")
+            done = list(done) if done else list()
         for i in prob:
             i['ProblemDone'] = 0
             for j in done:
