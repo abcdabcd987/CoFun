@@ -399,7 +399,7 @@ class Series:
             seriesid = int(seriesid)
         except:
             seriesid = 0
-        (series, problem) = db.Series.Get(seriesid)
+        (series, problem) = db.Series.Get(seriesid, session.userid)
         if not series:
             return render.Series(None, None, None)
         return render.Series(series, problem)

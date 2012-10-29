@@ -232,19 +232,21 @@ class Series(object):
         return cid
 
     @staticmethod
-    def Get(cid):
+    def Get(cid, userid):
         series = db.select("Series", where="SeriesID="+str(cid))
         prob = db.select("SeriesProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="SeriesProblem.SeriesID="+str(cid)+" AND Problem.ProblemID=SeriesProblem.ProblemID")
         if not series:
             return (None, None)
-        else:
-            done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN (SELECT ProblemID FROM SeriesProblem WHERE SeriesID="+cid+")", order="ProblemID")
         if not prob:
             prob = list()
         else:
             prob = list(prob)
+        if userid == -1:
+            done = list()
+        else:
+            done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN (SELECT ProblemID FROM SeriesProblem WHERE SeriesID="+str(cid)+")", order="ProblemID")
         for i in prob:
-            i.ProblemDone = 0
+            i['ProblemDone'] = 0
             for j in done:
                 if i.ProblemID == j.ProblemID:
                     if j.SubmitStatus == 3:
@@ -257,10 +259,10 @@ class Series(object):
 #(
 #  SELECT ProblemID FROM SeriesProblem WHERE SeriesID=%s
 #) ORDER BY ProblemID
-            series = list(series)[0]
-            series.SeriesDescription = markdown2.markdown(series.SeriesDescription)
-            series.FullScore = list(db.select("SeriesProblem", what="COUNT(*) AS Count", where="SeriesID="+str(cid)))[0]['Count']*100.0
-            return (series, prob)
+        series = list(series)[0]
+        series.SeriesDescription = markdown2.markdown(series.SeriesDescription)
+        series.FullScore = list(db.select("SeriesProblem", what="COUNT(*) AS Count", where="SeriesID="+str(cid)))[0]['Count']*100.0
+        return (series, prob)
 
     @staticmethod
     def GetList(offset, limit):

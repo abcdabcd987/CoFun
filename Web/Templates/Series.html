@@ -32,7 +32,6 @@ $if series:
         $if problems:
             $for prob in problems:
                 <tr$:DONE[prob.ProblemDone][1]>
-                <tr>
                   <td>$loop.index</td>
                   <td>$:DONE[prob.ProblemDone][0]</td>
                   <td><a href="/p$prob.ProblemID">$prob.ProblemTitle</a></td>
