@@ -182,20 +182,39 @@ class Submit:
 
 class Status:
     def GET(self, arg):
+        i = web.input()
+        ProblemID = i.get('pid', '')
+        UserName = i.get('uid', '')
+        SubmitLanguage = i.get('lang', '')
+        SubmitStatus = i.get('stat', '')
+        ContestID = i.get('cid', '')
+        try:
+            SubmitLanguage = int(SubmitLanguage)
+        except:
+            SubmitLanguage = '' 
+        try:
+            SubmitStatus = int(SubmitStatus)
+        except:
+            SubmitStatus = ''
+        SubmitLanguage = str(SubmitLanguage)
+        SubmitStatus = str(SubmitStatus)
+
         try:
             page = int(arg)
         except:
             page = 1
-        count = (db.Status.Count()+CONFIG['statusrows']-1)//CONFIG['statusrows']
+        count = (db.Status.Count(ProblemID=ProblemID, UserName=UserName, SubmitLanguage=SubmitLanguage, SubmitStatus=SubmitStatus, ContestID=ContestID)+CONFIG['statusrows']-1)//CONFIG['statusrows']
         page = min(page, count)
         page = max(page, 1)
-        lst = db.Status.GetList((page-1)*CONFIG['statusrows'], CONFIG['statusrows'])
-        for record in lst:
-            if record.ContestID != 0:
-                status = db.Contest.GetStatusByID(record.ContestID)
-                if status != 3:
-                    record.SubmitStatus = -1
-        return render.Status(lst, page, count)
+
+        lst = db.Status.GetList((page-1)*CONFIG['statusrows'], CONFIG['statusrows'], ProblemID=ProblemID, UserName=UserName, SubmitLanguage=SubmitLanguage, SubmitStatus=SubmitStatus, ContestID=ContestID)
+        if lst:
+            for record in lst:
+                if record.ContestID != 0:
+                    status = db.Contest.GetStatusByID(record.ContestID)
+                    if status != 3:
+                        record.SubmitStatus = -1
+        return render.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID)
         #return lst
 
 class ShowSource:

@@ -105,12 +105,35 @@ class Status(object):
         return db.insert("Submit", ProblemID=problemid, ContestID=contestid, UserID=userid, SubmitLanguage=lang, SubmitCode=code, CodeLength=len(code))
 
     @staticmethod
-    def Count():
-        return int(list(db.select("Submit", what="count(*)"))[0]["count(*)"])
+    def Count(ProblemID='', UserName='', SubmitLanguage='', SubmitStatus='', ContestID=''):
+        where = 'User.UserID=Submit.UserID'
+        if ProblemID:
+            where += ' AND ProblemID='+str(ProblemID)
+        if UserName:
+            where += " AND User.UserName='"+str(UserName)+"'"
+        if SubmitLanguage:
+            where += ' AND SubmitLanguage='+str(SubmitLanguage)
+        if SubmitStatus:
+            where += ' AND SubmitStatus='+str(SubmitStatus)
+        if ContestID:
+            where += ' AND ContestID='+str(ContestID)
+        return int(list(db.select("Submit, User", what="count(*)", where=where))[0]['count(*)'])
 
     @staticmethod
-    def GetList(offset, limit):
-        res = list(db.select("Submit, User", what="SubmitID, Submit.UserID, User.UserName, ProblemID, ContestID, SubmitStatus, SubmitScore, SubmitRunMemory, SubmitRunTime, SubmitLanguage, CodeLength, SubmitTime", where="`User`.`UserID` =  `Submit`.`UserID`", order="SubmitID DESC", offset=offset, limit=limit))
+    def GetList(offset, limit, ProblemID='', UserName='', SubmitLanguage='', SubmitStatus='', ContestID=''):
+        where = 'User.UserID=Submit.UserID'
+        if ProblemID:
+            where += ' AND ProblemID='+str(ProblemID)
+        if UserName:
+            where += " AND User.UserName='"+str(UserName)+"'"
+        if SubmitLanguage:
+            where += ' AND SubmitLanguage='+str(SubmitLanguage)
+        if SubmitStatus:
+            where += ' AND SubmitStatus='+str(SubmitStatus)
+        if ContestID:
+            where += ' AND ContestID='+str(ContestID)
+
+        res = list(db.select("Submit, User", what="SubmitID, Submit.UserID, User.UserName, ProblemID, ContestID, SubmitStatus, SubmitScore, SubmitRunMemory, SubmitRunTime, SubmitLanguage, CodeLength, SubmitTime", where=where, order="SubmitID DESC", offset=offset, limit=limit))
         if res:
             for submit in res:
                 submit.SubmitScore = "%3.1f" % float(submit.SubmitScore)
@@ -119,7 +142,7 @@ class Status(object):
     @staticmethod
     def Detail(submitid):
         res1 = list(db.select("Result", what="Result, RunTime, RunMemory, Score, Diff", where="SubmitID="+str(submitid)));
-        res2 = list(db.select("Submit", where="SubmitID="+str(submitid)));
+        res2 = list(db.select("Submit, User", where="User.UserID = Submit.UserID AND SubmitID="+str(submitid)));
         res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
         if res2:
             res2 = res2[0]

@@ -57,6 +57,11 @@ $if 'head' in content:
                   <li><a href="#">One more separated link</a></li>-->
                 </ul>
               </li>
+              <li>
+                <form id="gotoprob-form" name="gotoprob-form" class="navbar-form">
+                  <input type="text" id="gotoprob" name="gotoprob" class="span1" placeholder="Go!">
+                </form>
+              </li>
         </ul>
         $if session.userid == -1:
             <form class="navbar-form pull-right" method="POST" action="/login/" name="LoginForm">
@@ -92,5 +97,17 @@ $:content
     <p>Powered by <a href="https://github.com/abcdabcd987/CoFun">CoFun</a> | Version: <code>$:VERSION</code> | <a class="label label-info" href="/whatsnew/">What's New?</a></p>
   </footer>
 </div> <!-- /container -->
+<script>
+  $$(function(){
+    $$('#gotoprob').keyup(function(e){
+      var regex = /\d{4}/
+      if (regex.exec(this.value) !== null)
+      {
+        self.location.href="/p"+this.value;
+      }
+      return false;
+    });
+  });
+</script>
 </body>
 </html>
