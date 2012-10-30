@@ -73,10 +73,10 @@ $if 'head' in content:
         $else:
             <ul class="nav pull-right">
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/$session.gravatar?s=32&r=X" alt="$session.username" class="nav-gravatar" /> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/$session.gravatar?s=32&r=X&d=identicon" alt="$session.username" class="nav-gravatar" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li class="nav-header">$session.username</li>
-                  <li><a href="http://www.gravatar.com" target="_blank">Change avater</a></li>
+                  <li><a href="http://cn.gravatar.com" target="_blank">Change avater</a></li>
                   <li><a href="/logout/">Logout</a></li>
                   <!--<li class="divider"></li>
                   <li class="nav-header">Nav header</li>
@@ -93,7 +93,7 @@ $if 'head' in content:
 $:content
   <hr>
   <footer>
-    <p>&copy; CoFun.org 2012</p>
+    <p>&copy; CoFun.org 2012 | A simple Online Judge System designed for <span class="label label-important">Quanzhou No.7 High School</span> OI training.</p>
     <p>Powered by <a href="https://github.com/abcdabcd987/CoFun">CoFun</a> | Version: <code>$:VERSION</code> | <a class="label label-info" href="/whatsnew/">What's New?</a></p>
   </footer>
 </div> <!-- /container -->

@@ -51,7 +51,7 @@ class Problem(object):
 
     @staticmethod
     def GetList(offset, limit, userid):
-        res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemSource", offset=offset, limit=limit))
+        res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemSource", offset=offset, limit=limit, order="ProblemID"))
         if not res:
             return None
         if userid == -1:
@@ -88,6 +88,7 @@ class Problem(object):
         res.ProblemDescription = markdown2.markdown(res.ProblemDescription)
         res.ProblemInput = markdown2.markdown(res.ProblemInput)
         res.ProblemOutput = markdown2.markdown(res.ProblemOutput)
+        res.ProblemHint = markdown2.markdown(res.ProblemHint)
         return res
 
     @staticmethod
@@ -189,6 +190,7 @@ class Contest(object):
             prob.ProblemDescription = markdown2.markdown(prob.ProblemDescription)
             prob.ProblemInput = markdown2.markdown(prob.ProblemInput)
             prob.ProblemOutput = markdown2.markdown(prob.ProblemOutput)
+            prob.ProblemHint = markdown2.markdown(prob.ProblemHint)
             return (contest, prob)
 
     @staticmethod
@@ -261,7 +263,7 @@ class Series(object):
     @staticmethod
     def Get(cid, userid):
         series = db.select("Series", where="SeriesID="+str(cid))
-        prob = db.select("SeriesProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="SeriesProblem.SeriesID="+str(cid)+" AND Problem.ProblemID=SeriesProblem.ProblemID")
+        prob = db.select("SeriesProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="SeriesProblem.SeriesID="+str(cid)+" AND Problem.ProblemID=SeriesProblem.ProblemID", order="Problem.ProblemID")
         if not series:
             return (None, None)
         if not prob:

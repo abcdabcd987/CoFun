@@ -15,7 +15,7 @@ $else:
       <dt>Result</dt><dd>$:RESULTLIST[detail.SubmitStatus]</dd>
       <dt>Score</dt><dd>$detail.SubmitScore</dd>
     </dl>
-    <img src="http://www.gravatar.com/avatar/$db.Utility.MD5(detail.UserEmail.lower())?s=128&r=X" alt="$detail.UserName" class="pull-right">
+    <img src="http://www.gravatar.com/avatar/$db.Utility.MD5(detail.UserEmail.lower())?s=128&r=X&d=identicon" alt="$detail.UserName" class="pull-right">
     <div class="clearfix"></div>
     $if results:
         <table class="table table-hover">

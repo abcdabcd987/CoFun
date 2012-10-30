@@ -53,7 +53,7 @@ $if contest and problem:
     $if problem.ProblemHint:
         <section>
           <h2>Hint</h2>
-          <pre>$problem.ProblemHint</pre>
+          <div class="markdown">$:problem.ProblemHint</div>
         </section>
     $if problem.ProblemSource:
         <section>
