@@ -52,7 +52,6 @@ def Process(tasks):
         return
     for task in tasks:
         #print task
-        cur.execute('UPDATE Submit SET SubmitStatus=%s, JudgeTime=CURRENT_TIMESTAMP WHERE SubmitID=%s', (RESULT['RUN'], task['SubmitID']))
         os.chdir('/home/cofun/tmp')
         RemoveFiles()
         lang = task['SubmitLanguage']
@@ -80,6 +79,8 @@ def Process(tasks):
             config = line.strip().split('|')
             if not config:
                 continue
+
+            cur.execute('UPDATE Submit SET SubmitStatus=%s, JudgeTime=CURRENT_TIMESTAMP WHERE SubmitID=%s', (101+memcnt, task['SubmitID']))
 
             # config[0]:  input file
             # config[1]:  output file

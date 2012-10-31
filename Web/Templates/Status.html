@@ -16,24 +16,28 @@ $code:
 $if ajax:
     $if status:
         $for s in status:
-            $if ALERTLIST[s.SubmitStatus]:
+            $if s.SubmitStatus < 100 and ALERTLIST[s.SubmitStatus]:
                 <tr id="status-$s.SubmitID" class="$ALERTLIST[s.SubmitStatus]">
             $else:
                 <tr id="status-$s.SubmitID">
               <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
               <td>$s.UserName</td>
               <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
-              <td><a href="/s$s.SubmitID">$:RESULTLIST[s.SubmitStatus]</a></td>
-              $if s.SubmitStatus > 1:
-                  <td>$s.SubmitScore</td>
-                  <td>${s.SubmitRunMemory}KB</td>
-                  <td>${s.SubmitRunTime}MS</td>
+              $if s.SubmitStatus > 100:
+                  $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
               $else:
-                  <td></td>
-                  <td></td>
-                  <td></td>
-              <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+                  $ stat = RESULTLIST[s.SubmitStatus]
+              <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
               $if s.SubmitStatus > 1:
+                  <td id="score-$s.SubmitID">$s.SubmitScore</td>
+                  <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
+                  <td id="time-$s.SubmitID">${s.SubmitRunTime}MS</td>
+              $else:
+                  <td id="score-$s.SubmitID"></td>
+                  <td id="memory-$s.SubmitID"></td>
+                  <td id="time-$s.SubmitID"></td>
+              <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+              $if s.SubmitStatus >= 0:
                   <td>${s.CodeLength}B</td>
                   <td>$s.SubmitTime</td>
               $else:
@@ -111,24 +115,28 @@ $else:
       <tbody id="status-table">
         $if status:
             $for s in status:
-                $if ALERTLIST[s.SubmitStatus]:
+                $if s.SubmitStatus < 100 and ALERTLIST[s.SubmitStatus]:
                     <tr id="status-$s.SubmitID" class="$ALERTLIST[s.SubmitStatus]">
                 $else:
                     <tr id="status-$s.SubmitID">
                   <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
                   <td>$s.UserName</td>
                   <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
-                  <td><a href="/s$s.SubmitID">$:RESULTLIST[s.SubmitStatus]</a></td>
-                  $if s.SubmitStatus > 1:
-                      <td>$s.SubmitScore</td>
-                      <td>${s.SubmitRunMemory}KB</td>
-                      <td>${s.SubmitRunTime}MS</td>
+                  $if s.SubmitStatus > 100:
+                      $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
                   $else:
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                  <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+                      $ stat = RESULTLIST[s.SubmitStatus]
+                  <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
                   $if s.SubmitStatus > 1:
+                      <td id="score-$s.SubmitID">$s.SubmitScore</td>
+                      <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
+                      <td id="time-$s.SubmitID">${s.SubmitRunTime}MS</td>
+                  $else:
+                      <td id="score-$s.SubmitID"></td>
+                      <td id="memory-$s.SubmitID"></td>
+                      <td id="time-$s.SubmitID"></td>
+                  <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+                  $if s.SubmitStatus >= 0:
                       <td>${s.CodeLength}B</td>
                       <td>$s.SubmitTime</td>
                   $else:
@@ -152,11 +160,33 @@ $else:
     </div>
     <script>
     function gettable() {
-      $$.get("/status/${page}ajax$where", null, function (data, textStatus) {
-        ret = eval('('+data+')');
-        $$("#status-table").html(ret["html"]);
-      });
-      setTimeout("gettable();", 10000);
+      if (wait !== "") {
+        $$.get("/ajax/watch/", {submits: wait}, function (data, textStatus) {
+          var ret = eval('('+data+')');
+          wait = ""
+          for (var i = 0; i < ret.length; ++i) {
+            $$("#stat-"+ret[i]["SubmitID"]).html(ret[i]["html"]);
+            $$("#memory-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunMemory"]+"KB");
+            $$("#time-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunTime"]+"MS");
+            if (ret[i]["SubmitStatus"] === 0 || ret[i]["SubmitStatus"] > 100) {
+              if (wait === "") {
+                wait += ret[i]["SubmitID"]
+              } else {
+                wait += "|"+ret[i]["SubmitID"]
+              }
+            }
+          }
+        });
+        setTimeout("gettable();", 200);
+      } else {
+        $$.get("/status/${page}ajax$where", null, function (data, textStatus) {
+          var ret = eval('('+data+')');
+          $$("#status-table").html(ret["html"]);
+          wait = ret["wait"];
+        });
+        setTimeout("gettable();", 1000);
+      }
     }
-    setTimeout("gettable();", 10000);
+    wait = ""
+    setTimeout("gettable();", 100);
     </script>

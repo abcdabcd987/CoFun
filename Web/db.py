@@ -152,6 +152,11 @@ class Status(object):
                 testcase.Score = '%3.1f' % testcase.Score
         return (None, None, None, None) if not res2 else (res1, res2, res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])
 
+    @staticmethod
+    def AjaxWatch(submits):
+        res = db.select("Submit", what="SubmitID, SubmitRunTime, SubmitRunMemory, SubmitStatus", where="SubmitID IN ("+','.join(submits)+")")
+        return list(res) if res else list()
+
 class Contest(object):
     @staticmethod
     def Add(title, stime, etime, desc, prin, probs):

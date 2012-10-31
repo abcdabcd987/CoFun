@@ -1,4 +1,4 @@
-$def with (series, rank)
+$def with (series, rank, ajax=None)
 $code:
     COLOR = {
         0:    'danger',
@@ -8,30 +8,7 @@ $code:
     }
 
 $if series:
-    $var head: <meta http-equiv="refresh" content="60">
-    $var title: Rank - $series.SeriesTitle - Series $series.SeriesID
-    <h1>$series.SeriesTitle</h1>
-    <dl class="dl-horizontal">
-      <dt>Create Time</dt>
-      <dd>$series.SeriesCreateTime</dd>
-      <dt>Description</dt>
-      <dd>$:series.SeriesDescription</dd>
-    </dl>
-    <a name="rank"></a>
-    <div style="height:40px;"></div>
-    <table class="table table-hover">
-      <caption>
-        <h2>Series Rank</h2>
-      </caption>
-      <thead>
-        <tr>
-          <th class="span1">#</th>
-          <th class="span2">User</th>
-          <th>Score</th>
-          <th class="span1">Time</th>
-        </tr>
-      </thead>
-      <tbody id="status-table">
+    $if ajax:
         $if rank:
             $for result in rank:
                 $if loop.index == 1:
@@ -45,18 +22,66 @@ $if series:
                     $ c = COLOR[3]
                 $else:
                     $ myself = ''
-                <!--
-                  session.userid:  $session.userid
-                  result.UserID :  $result.UserID
-                -->
                 <tr class="alert alert-$c">
                   <td>$loop.index</td>
                   <td>$result.UserName</td>
                   <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
                   <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
                 </tr>
-      </tbody>
-    </table>
+    $else:
+        $var title: Rank - $series.SeriesTitle - Series $series.SeriesID
+        <h1>$series.SeriesTitle</h1>
+        <dl class="dl-horizontal">
+          <dt>Create Time</dt>
+          <dd>$series.SeriesCreateTime</dd>
+          <dt>Description</dt>
+          <dd>$:series.SeriesDescription</dd>
+        </dl>
+        <a name="rank"></a>
+        <div style="height:40px;"></div>
+        <table class="table table-hover">
+          <caption>
+            <h2>Series Rank</h2>
+          </caption>
+          <thead>
+            <tr>
+              <th class="span1">#</th>
+              <th class="span2">User</th>
+              <th>Score</th>
+              <th class="span1">Time</th>
+            </tr>
+          </thead>
+          <tbody id="status-table">
+            $if rank:
+                $for result in rank:
+                    $if loop.index == 1:
+                        $ c = COLOR[0]
+                    $elif loop.index <= 3:
+                        $ c = COLOR[1]
+                    $else:
+                        $ c = COLOR[2]
+                    $if session.userid == result.UserID:
+                        $ myself = ' active'
+                        $ c = COLOR[3]
+                    $else:
+                        $ myself = ''
+                    <tr class="alert alert-$c">
+                      <td>$loop.index</td>
+                      <td>$result.UserName</td>
+                      <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
+                      <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
+                    </tr>
+          </tbody>
+        </table>
+    <script>
+    function gettable() {
+      $$.get("/series$series.SeriesID/rankajax", null, function (data, textStatus) {
+        $$("#status-table").html(data);
+      });
+      setTimeout("gettable();", 60000);
+    }
+    setTimeout("gettable();", 60000);
+    </script>
 $else:
     $var title: Not Found the Series or Hidden
     <h1>Not Found the Series or Hidden</h1>

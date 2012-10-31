@@ -218,11 +218,11 @@ class Status:
                     if status != 3:
                         record.SubmitStatus = -1
                 if record.SubmitStatus == 0 or record.SubmitStatus > 100:
-                    wait.append(record.SubmitID)
+                    wait.append(str(record.SubmitID))
         if ajax:
             ret = {}
             ret['html'] = render_plain.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID, True).__body__
-            ret['wait'] = wait
+            ret['wait'] = '|'.join(wait)
             web.header("Content-Type","application/json; charset=utf-8")
             return json.dumps(ret)
         else:
@@ -440,7 +440,7 @@ class Series:
         return render.Series(series, problem)
 
 class SeriesRank:
-    def GET(self, seriesid):
+    def GET(self, seriesid, ajax=None):
         try:
             seriesid = int(seriesid)
         except:
@@ -449,8 +449,29 @@ class SeriesRank:
         if not series:
             return render.SeriesRank(None, None)
         rank = db.Series.GetRank(seriesid)
-        return render.SeriesRank(series, rank)
+        if ajax:
+            return render_plain.SeriesRank(series, rank, True)
+        else:
+            return render.SeriesRank(series, rank)
 
+class AjaxWatchStatus:
+    def GET(self, arg):
+        i = web.input()
+        submits = i.get('submits', '').split('|')
+        lst = list()
+        for submit in submits:
+            try:
+                submitid = int(submit)
+                lst.append(str(submitid))
+            except:
+                pass
+        lst = db.Status.AjaxWatch(lst) if lst else list()
+        for record in lst:
+            if record.SubmitStatus > 100:
+                record['html'] = RESULTLIST[100] % (record.SubmitStatus-100)
+            else:
+                record['html'] = RESULTLIST[record.SubmitStatus]
+        return json.dumps(lst)
 
 if __name__ == '__main__':
     app.run()

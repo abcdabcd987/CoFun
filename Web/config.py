@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 25'
+VERSION = '0.1 git commit 26'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -23,6 +23,7 @@ RESULTLIST = {
     5:      '<span class="label label-inverse">Runtime Error</span>',
     6:      '<span class="label label-warning">Time Limit Exceeded</span>',
     7:      '<span class="label label-warning">Memory Limit Exceeded</span>',
+  100:      'Running<span class="badge badge-important">%d</span>',
    -1:      '<span class="label">Hidden</span>',
 }
 
@@ -55,7 +56,10 @@ urls = (
     '/series/(.*)',     'SeriesList',
     '/series(\d+)',     'Series',
     '/series(\d+)/rank','SeriesRank',
+    '/series(\d+)/rank(ajax){1}',     'SeriesRank',
     '/newseries/(.*)',  'NewSeries',
+    '/status/(\d*)',     'Status',
+    '/ajax/watch/(.*)',     'AjaxWatchStatus',
 )
 
 web.config.session_parameters['cookie_name'] = 'cofun_session'
