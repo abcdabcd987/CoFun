@@ -177,14 +177,17 @@ $else:
             }
           }
         });
-        setTimeout("gettable();", 200);
       } else {
         $$.get("/status/${page}ajax$where", null, function (data, textStatus) {
           var ret = eval('('+data+')');
           $$("#status-table").html(ret["html"]);
           wait = ret["wait"];
         });
+      }
+      if (wait === "") {
         setTimeout("gettable();", 10000);
+      } else {
+        setTimeout("gettable();", 200);
       }
     }
     wait = ""
