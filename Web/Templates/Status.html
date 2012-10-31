@@ -1,7 +1,5 @@
-$def with (status, page, count, pid, uid, lang, stat, cid)
+$def with (status, page, count, pid, uid, lang, stat, cid, ajax=None)
 $var title: Status
-$var head:
-    <meta http-equiv="refresh" content="20">
 $code:
     ALERTLIST = {
        -1:      None,
@@ -15,80 +13,13 @@ $code:
         7:      'alert',
     }
     where = '?pid=%s&uid=%s&lang=%s&stat=%s&cid=%s' % (pid, uid, lang, stat, cid)
-<table class="table table-hover">
-  <caption>
-    <h2>Status</h2>
-    <div class="pagination">
-      <ul>
-        $if page == 1:
-            <li class="disabled"><a href="#">Prev</a></li>
-        $else:
-            <li><a href="/status/${page-1}$where">Prev</a></li>
-        $if page == count:
-            <li class="disabled"><a href="#">Next</a></li>
-        $else:
-            <li><a href="/status/${page+1}$where">Next</a></li>
-      </ul>
-    </div>
-    <div>
-      <form method="GET" action="/status/" name="StatusFilterForm" id="StatusFilterForm" class="form-inline">
-        $code:
-            vpid = ' value='+pid if pid else ''
-            vuid = ' value='+uid if uid else ''
-            vcid = ' value='+cid if cid else ''
-            vlang = {'': ' selected' if lang == '' else '',}
-            for i in xrange(1, 4):
-                vlang[i] = ' selected' if lang != '' and i == int(lang) else ''
-            vstat = {'': ' selected' if stat == '' else '',}
-            for i in xrange(-1, 8):
-                vstat[i] = ' selected' if stat != '' and i == int(stat) else ''
-            
-        <input type="text" name="pid" id="pid" class="span2" placeholder="ProblemID"$vpid>
-        <input type="text" name="uid" id="uid" class="span2" placeholder="Username"$vuid>
-        <select name="lang" class="span2">
-          <option value=""$vlang['']>--Language--</option>
-          <option value="1"$vlang[1]>C</option>
-          <option value="2"$vlang[2]>C++</option>
-          <option value="3"$vlang[3]>Free Pascal</option>
-        </select>
-        <select name="stat" class="span3">
-          <option value=""$vstat['']>--Status--</option>
-          <option value="-1"$vstat[-1]>Hidden</option>
-          <option value="0"$vstat[0]>Waiting</option>
-          <option value="1"$vstat[1]>Compile Error</option>
-          <option value="2"$vstat[2]>Running &amp; Judging</option>
-          <option value="3"$vstat[3]>Accepted</option>
-          <option value="4"$vstat[4]>Wrong Answer</option>
-          <option value="5"$vstat[5]>Runtime Error</option>
-          <option value="6"$vstat[6]>Time Limit Exceeded</option>
-          <option value="7"$vstat[7]>Memory Limit Exceeded</option>
-        </select>
-        <input type="text" name="cid" id="cid" class="span2" placeholder="ContestID">
-        <input type="submit" class="btn">
-      </form>
-    </div>
-  </caption>
-  <thead>
-    <tr>
-      <th class="span1">#</th>
-      <th>User</th>
-      <th>Problem</th>
-      <th>Result</th>
-      <th>Score</th>
-      <th>Memory</th>
-      <th>Time</th>
-      <th>Language</th>
-      <th>Code Length</th>
-      <th>Submit Time</th>
-    </tr>
-  </thead>
-  <tbody id="status-table">
+$if ajax:
     $if status:
         $for s in status:
             $if ALERTLIST[s.SubmitStatus]:
-                <tr class="$ALERTLIST[s.SubmitStatus]">
+                <tr id="status-$s.SubmitID" class="$ALERTLIST[s.SubmitStatus]">
             $else:
-                <tr>
+                <tr id="status-$s.SubmitID">
               <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
               <td>$s.UserName</td>
               <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
@@ -109,17 +40,123 @@ $code:
                   <td></td>
                   <td></td>
             </tr>
-  </tbody>
-</table>
-<div class="pagination center">
-  <ul>
-    $if page == 1:
-        <li class="disabled"><a href="#">Prev</a></li>
-    $else:
-        <li><a href="/status/${page-1}$where">Prev</a></li>
-    $if page == count:
-        <li class="disabled"><a href="#">Next</a></li>
-    $else:
-        <li><a href="/status/${page+1}$where">Next</a></li>
-  </ul>
-</div>
+$else:
+    <table class="table table-hover">
+      <caption>
+        <h2>Status</h2>
+        <div class="pagination">
+          <ul>
+            $if page == 1:
+                <li class="disabled"><a href="#">Prev</a></li>
+            $else:
+                <li><a href="/status/${page-1}$where">Prev</a></li>
+            $if page == count:
+                <li class="disabled"><a href="#">Next</a></li>
+            $else:
+                <li><a href="/status/${page+1}$where">Next</a></li>
+          </ul>
+        </div>
+        <div>
+          <form method="GET" action="/status/" name="StatusFilterForm" id="StatusFilterForm" class="form-inline">
+            $code:
+                vpid = ' value='+pid if pid else ''
+                vuid = ' value='+uid if uid else ''
+                vcid = ' value='+cid if cid else ''
+                vlang = {'': ' selected' if lang == '' else '',}
+                for i in xrange(1, 4):
+                    vlang[i] = ' selected' if lang != '' and i == int(lang) else ''
+                vstat = {'': ' selected' if stat == '' else '',}
+                for i in xrange(-1, 8):
+                    vstat[i] = ' selected' if stat != '' and i == int(stat) else ''
+                
+            <input type="text" name="pid" id="pid" class="span2" placeholder="ProblemID"$vpid>
+            <input type="text" name="uid" id="uid" class="span2" placeholder="Username"$vuid>
+            <select name="lang" class="span2">
+              <option value=""$vlang['']>--Language--</option>
+              <option value="1"$vlang[1]>C</option>
+              <option value="2"$vlang[2]>C++</option>
+              <option value="3"$vlang[3]>Free Pascal</option>
+            </select>
+            <select name="stat" class="span3">
+              <option value=""$vstat['']>--Status--</option>
+              <option value="-1"$vstat[-1]>Hidden</option>
+              <option value="0"$vstat[0]>Waiting</option>
+              <option value="1"$vstat[1]>Compile Error</option>
+              <option value="2"$vstat[2]>Running &amp; Judging</option>
+              <option value="3"$vstat[3]>Accepted</option>
+              <option value="4"$vstat[4]>Wrong Answer</option>
+              <option value="5"$vstat[5]>Runtime Error</option>
+              <option value="6"$vstat[6]>Time Limit Exceeded</option>
+              <option value="7"$vstat[7]>Memory Limit Exceeded</option>
+            </select>
+            <input type="text" name="cid" id="cid" class="span2" placeholder="ContestID">
+            <input type="submit" class="btn">
+          </form>
+        </div>
+      </caption>
+      <thead>
+        <tr>
+          <th class="span1">#</th>
+          <th>User</th>
+          <th>Problem</th>
+          <th>Result</th>
+          <th>Score</th>
+          <th>Memory</th>
+          <th>Time</th>
+          <th>Language</th>
+          <th>Code Length</th>
+          <th>Submit Time</th>
+        </tr>
+      </thead>
+      <tbody id="status-table">
+        $if status:
+            $for s in status:
+                $if ALERTLIST[s.SubmitStatus]:
+                    <tr id="status-$s.SubmitID" class="$ALERTLIST[s.SubmitStatus]">
+                $else:
+                    <tr id="status-$s.SubmitID">
+                  <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
+                  <td>$s.UserName</td>
+                  <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
+                  <td><a href="/s$s.SubmitID">$:RESULTLIST[s.SubmitStatus]</a></td>
+                  $if s.SubmitStatus > 1:
+                      <td>$s.SubmitScore</td>
+                      <td>${s.SubmitRunMemory}KB</td>
+                      <td>${s.SubmitRunTime}MS</td>
+                  $else:
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+                  $if s.SubmitStatus > 1:
+                      <td>${s.CodeLength}B</td>
+                      <td>$s.SubmitTime</td>
+                  $else:
+                      <td></td>
+                      <td></td>
+                </tr>
+      </tbody>
+    </table>
+    <div class="pagination center">
+      <ul>
+        $if page == 1:
+            <li class="disabled"><a href="#">Prev</a></li>
+        $else:
+            <li><a href="/status/${page-1}$where">Prev</a></li>
+        $if page == count:
+            <li class="disabled"><a href="#">Next</a></li>
+        $else:
+            <li><a href="/status/${page+1}$where">Next</a></li>
+      </ul>
+    </div>
+    </div>
+    <script>
+    function gettable() {
+      $$.get("/status/${page}ajax$where", null, function (data, textStatus) {
+        ret = eval('('+data+')');
+        $$("#status-table").html(ret["html"]);
+      });
+      setTimeout("gettable();", 10000);
+    }
+    setTimeout("gettable();", 10000);
+    </script>

@@ -33,6 +33,7 @@ $if contest:
           <th class="span1">#</th>
           <th class="span2">User</th>
           <th>Score</th>
+          <th class="span1">Time</th>
         </tr>
       </thead>
       <tbody id="status-table">
@@ -50,6 +51,7 @@ $if contest:
                   <td>$loop.index</td>
                   <td>$result.UserName</td>
                   <td><div class="progress progress-$c progress-striped"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
+                  <td>$result.Time</td>
                 </tr>
       </tbody>
     </table>

@@ -234,7 +234,8 @@ class Contest(object):
 
     @staticmethod
     def GetRank(cid):
-        res = db.select('(SELECT * FROM (SELECT UserID, ProblemID, SubmitScore FROM Submit WHERE ContestID='+str(cid)+' ORDER BY SubmitID DESC) as tmp1 GROUP BY UserID, ProblemID) as tmp2, User', what='tmp2.UserID, UserName, SUM(SubmitScore) AS Score', where='tmp2.UserID=User.UserID', group='UserID', order='Score DESC')
+        res = db.select('(SELECT * FROM (SELECT UserID, ProblemID, SubmitScore, SubmitTime FROM Submit WHERE ContestID='+str(cid)+' ORDER BY SubmitID DESC) as tmp1 GROUP BY UserID, ProblemID) as tmp2, User', 
+                what='tmp2.UserID, UserName, SUM(SubmitScore) AS Score, SUM(SubmitTime) AS Time', where='tmp2.UserID=User.UserID', group='UserID', order='Score DESC, Time ASC')
         return list(res) if res else None
         #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score FROM
         #(
@@ -305,7 +306,9 @@ class Series(object):
 
     @staticmethod
     def GetRank(sid):
-        res = db.select('( SELECT ProblemId, SubmitScore, UserID FROM ( SELECT ProblemID, UserID, SubmitScore FROM Submit WHERE ProblemID IN ( SELECT ProblemID FROM SeriesProblem WHERE SeriesID='+str(sid)+') ORDER BY SubmitID DESC) AS tmp1 GROUP BY ProblemID, UserID) AS tmp2, User', what="tmp2.UserID, UserName, SUM(SubmitScore) AS Score", group='UserID', order='Score DESC', where="User.UserID=tmp2.UserID")
+        res = db.select('( SELECT ProblemId, SubmitScore, SubmitRunTime, UserID FROM ( SELECT ProblemID, UserID, SubmitScore, SubmitRunTime FROM Submit WHERE ProblemID IN ( SELECT ProblemID FROM SeriesProblem WHERE SeriesID='+str(sid)+') ORDER BY SubmitID DESC) AS tmp1 GROUP BY ProblemID, UserID) AS tmp2, User', 
+                what="tmp2.UserID, UserName, SUM(SubmitScore) AS Score, SUM(SubmitRunTime) AS Time", 
+                group='UserID', order='Score DESC, Time ASC', where="User.UserID=tmp2.UserID")
         return list(res) if res else None
         #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score FROM
         #(

@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.1 git commit 24'
+VERSION = '0.1 git commit 25'
 
 CONFIG = {
     'dbtype':       'mysql',
@@ -43,6 +43,7 @@ urls = (
     '/newproblem/(.*)', 'NewProblem',
     '/p(\d+)',           'Problem',
     '/status/(\d*)',     'Status',
+    '/status/(\d*)(ajax){1}',     'Status',
     '/s(\d+)',          'ShowSource',
     '/contest/(\d*)',    'ContestList',
     '/c(\d+)p(.\d+)',   'ContestProblem',

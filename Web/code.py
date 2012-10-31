@@ -4,6 +4,7 @@ import web
 import db
 import zlib
 import time
+import json
 import random
 from config import * 
 
@@ -11,6 +12,7 @@ from config import *
 app = web.application(urls, globals())
 session = web.session.Session(app, web.session.DiskStore('Sessions'), initializer={'userid': -1, 'username': None, 'gravatar': None})
 render = web.template.render('Templates/', globals=globals(), base='Layout')
+render_plain = web.template.render('Templates/', globals=globals())
 
 vtitle = re.compile(r'.{2,100}$')
 vtime = re.compile(r'^\d{3,6}$')
@@ -181,7 +183,7 @@ class Submit:
         raise web.seeother('/status/')
 
 class Status:
-    def GET(self, arg):
+    def GET(self, arg, ajax=None):
         i = web.input()
         ProblemID = i.get('pid', '')
         UserName = i.get('uid', '')
@@ -208,14 +210,23 @@ class Status:
         page = max(page, 1)
 
         lst = db.Status.GetList((page-1)*CONFIG['statusrows'], CONFIG['statusrows'], ProblemID=ProblemID, UserName=UserName, SubmitLanguage=SubmitLanguage, SubmitStatus=SubmitStatus, ContestID=ContestID)
+        wait = []
         if lst:
             for record in lst:
                 if record.ContestID != 0:
                     status = db.Contest.GetStatusByID(record.ContestID)
                     if status != 3:
                         record.SubmitStatus = -1
-        return render.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID)
-        #return lst
+                if record.SubmitStatus == 0 or record.SubmitStatus > 100:
+                    wait.append(record.SubmitID)
+        if ajax:
+            ret = {}
+            ret['html'] = render_plain.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID, True).__body__
+            ret['wait'] = wait
+            web.header("Content-Type","application/json; charset=utf-8")
+            return json.dumps(ret)
+        else:
+            return render.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID)
 
 class ShowSource:
     def GET(self, submitid):
