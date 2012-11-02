@@ -1,4 +1,4 @@
-$def with (series, rank, ajax=None)
+$def with (contest, rank, ajax=None)
 $code:
     COLOR = {
         0:    'danger',
@@ -6,8 +6,13 @@ $code:
         2:    'success',
         3:    'info',
     }
+    CONTESTSTATUS = {
+        1:    ('label label-success', 'Ready'),
+        2:    ('label label-warning', 'Live'),
+        3:    ('label', 'Done'),
+    }
 
-$if series:
+$if contest:
     $if ajax:
         $if rank:
             $for result in rank:
@@ -25,23 +30,29 @@ $if series:
                 <tr class="alert alert-$c">
                   <td>$loop.index</td>
                   <td>$result.UserName</td>
-                  <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
+                  <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
                   <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
                 </tr>
     $else:
-        $var title: Rank - $series.SeriesTitle - Series $series.SeriesID
-        <h1>$series.SeriesTitle</h1>
+        $var title: Current Rank - $contest.ContestTitle - Contest $contest.ContestID
+        <h1>Current Rank of <em>$contest.ContestTitle</em></h1>
         <dl class="dl-horizontal">
-          <dt>Create Time</dt>
-          <dd>$series.SeriesCreateTime</dd>
+          <dt>Start Time</dt>
+          <dd>$contest.ContestStartTime</dd>
+          <dt>End Time</dt>
+          <dd>$contest.ContestEndTime</dd>
+          <dt>Status</dt>
+          <dd><span class="label">Done</span></dd>
+          <dt>Principal</dt>
+          <dd>$contest.ContestPrincipal</dd>
           <dt>Description</dt>
-          <dd>$:series.SeriesDescription</dd>
+          <dd>$:contest.ContestDescription</dd>
         </dl>
         <a name="rank"></a>
         <div style="height:40px;"></div>
         <table class="table table-hover">
           <caption>
-            <h2>Series Rank</h2>
+            <h2>Contest Current Rank</h2>
           </caption>
           <thead>
             <tr>
@@ -68,14 +79,14 @@ $if series:
                     <tr class="alert alert-$c">
                       <td>$loop.index</td>
                       <td>$result.UserName</td>
-                      <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
+                      <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
                       <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
                     </tr>
           </tbody>
         </table>
         <script>
         function gettable() {
-          $$.get("/series$series.SeriesID/rankajax", null, function (data, textStatus) {
+          $$.get("/c$contest.ContestID/rankajax", null, function (data, textStatus) {
              $$("#status-table").html(data);
            });
            setTimeout("gettable();", 60000);
@@ -83,5 +94,5 @@ $if series:
          setTimeout("gettable();", 60000);
          </script>
 $else:
-    $var title: Not Found the Series or Hidden
-    <h1>Not Found the Series or Hidden</h1>
+    $var title: Not Found the Contest or Hidden
+    <h1>Not Found the Contest or Hidden</h1>

@@ -1,4 +1,4 @@
-$def with (detail, results, mem, time)
+$def with (detail, results)
 $var title: Show Source
 $var head: 
     <link href="/static/google-code-prettify/prettify.css" type="text/css" rel="stylesheet">
@@ -9,8 +9,8 @@ $else:
     <dl class="dl-horizontal pull-left">
       <dt>Problem ID</dt><dd><a href="/p$detail.ProblemID">$detail.ProblemID</a></dd>
       <dt>User</dt><dd>$detail.UserName</dd>
-      <dt>Average Memory</dt><dd>${mem}Kbytes</dd>
-      <dt>Time</dt><dd>${time}MS</dd>
+      <dt>Average Memory</dt><dd>${detail.SubmitRunMemory}Kbytes</dd>
+      <dt>Time</dt><dd>${detail.SubmitRunTime}MS</dd>
       <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
       <dt>Result</dt><dd>$:RESULTLIST[detail.SubmitStatus]</dd>
       <dt>Score</dt><dd>$detail.SubmitScore</dd>

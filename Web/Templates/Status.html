@@ -1,4 +1,4 @@
-$def with (status, page, count, pid, uid, lang, stat, cid, ajax=None)
+$def with (status, page, count, pid, uid, lang, stat, cid, wait='', ajax=None)
 $var title: Status
 $code:
     ALERTLIST = {
@@ -45,7 +45,7 @@ $if ajax:
                   <td></td>
             </tr>
 $else:
-    <table class="table table-hover">
+    <table class="table table-hover table-condensed">
       <caption>
         <h2>Status</h2>
         <div class="pagination">
@@ -157,7 +157,6 @@ $else:
             <li><a href="/status/${page+1}$where">Next</a></li>
       </ul>
     </div>
-    </div>
     <script>
     function gettable() {
       if (wait !== "") {
@@ -190,6 +189,6 @@ $else:
         setTimeout("gettable();", 200);
       }
     }
-    wait = ""
+    wait = "$wait"
     setTimeout("gettable();", 100);
     </script>

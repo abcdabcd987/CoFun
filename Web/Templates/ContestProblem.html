@@ -29,7 +29,11 @@ $if contest and problem:
         <dt>Memory Limit</dt><dd>$problem.ProblemMemory KBytes</dd>
       </dl>
     </section>
-    <a class="btn btn-primary" href="/submit/$problem.ProblemID/$contest.ContestID">Submit</a>
+    $if contest.ContestStatus == 3:
+        $ sp = ''
+    $else:
+        $ sp = '/%d' % problem.ProblemID
+    <a class="btn btn-primary" href="/submit$sp/$contest.ContestID">Submit</a>
     <section>
       <h2>Description</h2>
       <div class="markdown">$:problem.ProblemDescription</div>
@@ -61,7 +65,7 @@ $if contest and problem:
           <pre>$problem.ProblemSource</pre>
         </section>
     <section>
-      <a class="btn btn-primary" href="/submit/$problem.ProblemID/$contest.ContestID">Submit</a>
+      <a class="btn btn-primary" href="/submit$sp/$contest.ContestID">Submit</a>
     </section>
 $else:
     $var title: Not Found the Problem

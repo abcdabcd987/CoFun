@@ -221,12 +221,12 @@ class Status:
                     wait.append(str(record.SubmitID))
         if ajax:
             ret = {}
-            ret['html'] = render_plain.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID, True).__body__
+            ret['html'] = render_plain.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID, None, True).__body__
             ret['wait'] = '|'.join(wait)
             web.header("Content-Type","application/json; charset=utf-8")
             return json.dumps(ret)
         else:
-            return render.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID)
+            return render.Status(lst, page, count, ProblemID, UserName, SubmitLanguage, SubmitStatus, ContestID, '|'.join(wait))
 
 class ShowSource:
     def GET(self, submitid):
@@ -234,12 +234,12 @@ class ShowSource:
             submitid = int(submitid)
         except:
             submitid = -1
-        (results, detail, avgmem, sumtime) = db.Status.Detail(int(submitid))
+        (results, detail) = db.Status.Detail(int(submitid))
         if detail.ContestID != 0:
             status = db.Contest.GetStatusByID(detail.ContestID)
             if status != 3:
                 detail.SubmitStatus = -1
-        return render.ShowSource(detail, results, int(avgmem) if avgmem else 0, int(sumtime) if sumtime else 0)
+        return render.ShowSource(detail, results)
 
 class NewContest:
     def GET(self, arg):
@@ -311,13 +311,9 @@ class Contest:
             contestid = int(contestid)
         except:
             contestid = 0
-        (contest, problem) = db.Contest.Get(contestid)
+        (contest, problem) = db.Contest.Get(contestid, session.userid)
         if not contest:
             return render.Contest(None, None, None)
-        username = db.Member.GetInfo(contest.ContestPrincipal)
-        if not username:
-            username = 'empty'
-        contest.ContestPrincipal = username['UserName']
         contest['ContestStatus'] = db.Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
         return render.Contest(contest, problem)
 
@@ -345,15 +341,11 @@ class ContestRank:
             contestid = int(contestid)
         except:
             contestid = -1
-        (contest, problem) = db.Contest.Get(contestid)
+        (contest, problem) = db.Contest.Get(contestid, session.userid)
         if not contest:
             return render.ContestRank(None, None)
         if db.Contest.GetStatusByID(contestid) != 3:
             return render.ContestRank(None, None)
-        username = db.Member.GetInfo(contest.ContestPrincipal)
-        if not username:
-            username = 'empty'
-        contest.ContestPrincipal = username['UserName']
         contest['ContestStatus'] = db.Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
 
         rank = db.Contest.GetRank(contestid)
@@ -373,7 +365,7 @@ class Upload:
         if session.userid == -1:
             raise web.seeother('/')
         i = web.input(UploadFile={})
-        filedir = 'static/probimg/'
+        filedir = '/var/www/cofunimg'
         if 'UploadFile' in i:
             filepath = i.UploadFile.filename.replace('\\', '/')
             extension = filepath.split('/')[-1].split('.')[-1].lower()
@@ -384,7 +376,7 @@ class Upload:
             fout = open(filedir+'/'+filename, 'wb')
             fout.write(i.UploadFile.file.read())
             fout.close()
-        return render.Upload('Done! See <code>http://cofun.org/static/probimg/'+filename+'</code>')
+        return render.Upload('Done! See <code>static/probimg/'+filename+'</code>')
 
 
 ###Series
@@ -472,6 +464,23 @@ class AjaxWatchStatus:
             else:
                 record['html'] = RESULTLIST[record.SubmitStatus]
         return json.dumps(lst)
+
+class ContestCurrentRank:
+    def GET(self, contestid, ajax=None):
+        try:
+            contestid = int(contestid)
+        except:
+            contestid = -1
+        (contest, problem) = db.Contest.Get(contestid, session.userid)
+        if not contest:
+            return render.ContestCurrentRank(None, None)
+        if db.Contest.GetStatusByID(contestid) != 3:
+            return render.ContestCurrentRank(None, None)
+        rank = db.Contest.GetCurrentRank(contestid)
+        if ajax:
+            return render_plain.ContestCurrentRank(contest, rank, True)
+        else:
+            return render.ContestCurrentRank(contest, rank)
 
 if __name__ == '__main__':
     app.run()

@@ -43,15 +43,18 @@ $if contest:
                     $ c = COLOR[0]
                 $elif loop.index <= 3:
                     $ c = COLOR[1]
-                $elif loop.index <= 6:
-                    $ c = COLOR[2]
                 $else:
                     $ c = COLOR[2]
+                $if session.userid == result.UserID:
+                    $ myself = ' active'
+                    $ c = COLOR[3]
+                $else:
+                    $ myself = ''
                 <tr class="alert alert-$c">
                   <td>$loop.index</td>
                   <td>$result.UserName</td>
-                  <td><div class="progress progress-$c progress-striped"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
-                  <td>$result.Time</td>
+                  <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
+                  <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
                 </tr>
       </tbody>
     </table>

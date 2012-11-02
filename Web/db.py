@@ -144,13 +144,12 @@ class Status(object):
     def Detail(submitid):
         res1 = list(db.select("Result", what="Result, RunTime, RunMemory, Score, Diff", where="SubmitID="+str(submitid)));
         res2 = list(db.select("Submit, User", where="User.UserID = Submit.UserID AND SubmitID="+str(submitid)));
-        res3 = list(db.select("Result", what="AVG(RunMemory), SUM(RunTime)", where="SubmitID="+str(submitid)))
         if res2:
             res2 = res2[0]
-            res2.SubmitScore = '%3.1f' % res2.SubmitScore
+            res2.SubmitScore = '%3d' % res2.SubmitScore
             for testcase in res1:
-                testcase.Score = '%3.1f' % testcase.Score
-        return (None, None, None, None) if not res2 else (res1, res2, res3[0]['AVG(RunMemory)'], res3[0]['SUM(RunTime)'])
+                testcase.Score = '%3d' % testcase.Score
+        return (None, None) if not res2 else (res1, res2)
 
     @staticmethod
     def AjaxWatch(submits):
@@ -171,16 +170,67 @@ class Contest(object):
         return cid
 
     @staticmethod
-    def Get(cid):
-        contest = db.select("Contest", where="ContestID="+str(cid))
-        prob = db.select("ContestProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="ContestProblem.ContestID="+str(cid)+" AND Problem.ProblemID=ContestProblem.ProblemID")
+    def Get(cid, userid):
+        contest = db.select("Contest, User", what="ContestID, ContestTitle, ContestStartTime, ContestEndTime, ContestDescription, UserName AS ContestPrincipal", where="User.UserID=Contest.ContestPrincipal AND ContestID="+str(cid))
+        prob = db.select("ContestProblem, Problem", what="Problem.ProblemID, Problem.ProblemTitle", where="ContestProblem.ContestID="+str(cid)+" AND Problem.ProblemID=ContestProblem.ProblemID", order="Problem.ProblemID")
         if not contest:
             return (None, None)
+        contest = list(contest)[0]
+        if not prob:
+            prob = list()
         else:
-            contest = list(contest)[0]
-            contest.ContestDescription = markdown2.markdown(contest.ContestDescription)
-            contest.FullScore = list(db.select("ContestProblem", what="COUNT(*) AS Count", where="ContestID="+str(cid)))[0]['Count']*100.0
-            return (contest, list(prob)) if prob else (contest, None)
+            prob = list(prob)
+        status = Contest.GetStatus(contest.ContestStartTime, contest.ContestEndTime)
+        if userid == -1:
+            done = list()
+        else:
+            if status == 3:
+                done = db.select("Submit", what="DISTINCT ProblemID, SubmitStatus", where="UserID="+str(userid)+" AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN (SELECT ProblemID FROM ContestProblem WHERE ContestID="+str(cid)+")", order="ProblemID")
+            else:
+                done = db.select("Submit", what="DISTINCT ProblemID", where="UserID="+str(userid)+" AND ContestID="+str(cid), order="ProblemID")
+                done = list(done) if done else list()
+        if status == 3:
+            for i in prob:
+                i['ProblemDone'] = 0
+                for j in done:
+                    if i.ProblemID == j.ProblemID:
+                        if j.SubmitStatus == 3:
+                            i.ProblemDone = 1
+                            break
+                        else:
+                            i.ProblemDone = 2
+        else:
+            for i in prob:
+                i['ProblemDone'] = 0
+                for j in done:
+                    if i.ProblemID == j.ProblemID:
+                        i.ProblemDone = 3
+                        break
+#SELECT DISTINCT ProblemID, SubmitStatus FROM Submit 
+#WHERE UserID=%s AND SubmitStatus IN (3, 4) AND Submit.ProblemID IN 
+#(
+#  SELECT ProblemID FROM ContestProblem WHERE ContestID=%s
+#) ORDER BY ProblemID
+        contest.ContestDescription = markdown2.markdown(contest.ContestDescription)
+        contest.FullScore = list(db.select("ContestProblem", what="COUNT(*) AS Count", where="ContestID="+str(cid)))[0]['Count']*100.0
+        return (contest, prob)
+
+    @staticmethod
+    def GetCurrentRank(cid):
+        res = db.select('( SELECT ProblemId, SubmitScore, SubmitRunTime, UserID FROM ( SELECT ProblemID, UserID, SubmitScore, SubmitRunTime FROM Submit WHERE ProblemID IN ( SELECT ProblemID FROM ContestProblem WHERE ContestID='+str(cid)+') ORDER BY SubmitID DESC) AS tmp1 GROUP BY ProblemID, UserID) AS tmp2, User', 
+                what="tmp2.UserID, UserName, SUM(SubmitScore) AS Score, SUM(SubmitRunTime) AS Time", 
+                group='UserID', order='Score DESC, Time ASC', where="User.UserID=tmp2.UserID")
+        return list(res) if res else None
+        #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score FROM
+        #(
+        #  SELECT ProblemId, SubmitScore, UserID FROM
+        #  (
+        #    SELECT ProblemID, UserID, SubmitScore FROM Submit WHERE ProblemID IN 
+        #    (
+        #      SELECT ProblemID FROM ContestProblem WHERE ContestID=cid
+        #    ) ORDER BY SubmitID DESC
+        #  ) AS tmp1 GROUP BY ProblemID, UserID
+        #) AS tmp2, User WHERE User.UserID=tmp2.UserID GROUP BY UserID ORDER BY Score DESC ;
 
     @staticmethod
     def GetProblem(cid, pid):
@@ -239,15 +289,15 @@ class Contest(object):
 
     @staticmethod
     def GetRank(cid):
-        res = db.select('(SELECT * FROM (SELECT UserID, ProblemID, SubmitScore, SubmitTime FROM Submit WHERE ContestID='+str(cid)+' ORDER BY SubmitID DESC) as tmp1 GROUP BY UserID, ProblemID) as tmp2, User', 
-                what='tmp2.UserID, UserName, SUM(SubmitScore) AS Score, SUM(SubmitTime) AS Time', where='tmp2.UserID=User.UserID', group='UserID', order='Score DESC, Time ASC')
+        res = db.select('(SELECT * FROM (SELECT UserID, ProblemID, SubmitScore, SubmitRunTime FROM Submit WHERE ContestID='+str(cid)+' ORDER BY SubmitID DESC) as tmp1 GROUP BY UserID, ProblemID) as tmp2, User', 
+                what='tmp2.UserID, UserName, SUM(SubmitScore) AS Score, SUM(SubmitRunTime) AS Time', where='tmp2.UserID=User.UserID', group='UserID', order='Score DESC, Time ASC')
         return list(res) if res else None
-        #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score FROM
+        #SELECT tmp2.UserID, UserName, SUM(SubmitScore) AS Score, SUM(SubmitRunTime) AS Time FROM
         #(
         #  SELECT *
         #  FROM 
         #  (
-        #    SELECT UserID, ProblemID, SubmitScore FROM Submit WHERE ContestID=1000 ORDER BY SubmitID DESC
+        #    SELECT UserID, ProblemID, SubmitScore, SubmitRunTime FROM Submit WHERE ContestID=1000 ORDER BY SubmitID DESC
         #  ) as tmp1
         #  GROUP BY UserID, ProblemID
         #) as tmp2, User

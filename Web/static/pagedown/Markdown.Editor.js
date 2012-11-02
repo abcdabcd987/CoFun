@@ -64,7 +64,7 @@
 
     // The default text that appears in the dialog input box when entering
     // links.
-    var imageDefaultText = "http://cofun.org/static/probimg/";
+    var imageDefaultText = "/static/probimg/";
     var linkDefaultText = "http://";
 
     // -------------------------------------------------------------------

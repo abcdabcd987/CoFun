@@ -5,6 +5,12 @@ $code:
         2:    ('label label-warning', 'Live'),
         3:    ('label', 'Done'),
     }
+    DONE = {
+        0:    ('', ''),
+        1:    ('<span class="label label-success">AC</span>', ' class="alert alert-success"'),
+        2:    ('<span class="label label-important">WA</span>', ' class="alert alert-error"'),
+        3:    ('<span class="label label-inverse">Submittid</span>', ' class="alert alert-info"'),
+    }
 $if contest:
     $var title: $contest.ContestTitle - Contest $contest.ContestID
     <h1>$contest.ContestTitle</h1>
@@ -20,11 +26,13 @@ $if contest:
       <dt>Description</dt>
       <dd>$:contest.ContestDescription</dd>
     </dl>
-    <div>
+    <div class="btn-group">
       $if contest.ContestStatus == 3:
           <a class="btn btn-danger" href="/cr$contest.ContestID#rank">Rank</a>
+          <a class="btn btn-warning" href="/c$contest.ContestID/rank#rank">Current Rank</a>
       $else:
           <button class="btn">Rank</button>
+          <button class="btn">Current Rank</button>
     </div>
     <table class="table table-hover">
       <caption>
@@ -33,14 +41,16 @@ $if contest:
       <thead>
         <tr>
           <th class="span1">#</th>
+          <th class="span1"></th>
           <th>Problem</th>
         </tr>
       </thead>
       <tbody>
         $if problems and contest.ContestStatus != 1:
             $for prob in problems:
-                <tr>
+                <tr$:DONE[prob.ProblemDone][1]>
                   <td>$loop.index</td>
+                  <td>$:DONE[prob.ProblemDone][0]</td>
                   <td><a href="/c${contest.ContestID}p$prob.ProblemID#showproblem">$prob.ProblemTitle</a></td>
                 </tr>
       </tbody>
