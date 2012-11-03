@@ -108,6 +108,11 @@ class NewProblem:
         sampleout = i.get('ProblemSampleOut', None)
         hint = i.get('ProblemHint', None)
         source = i.get('ProblemSource', None)
+        spj = i.get('SpecialJudge', None)
+        if spj == 'on':
+            spj = 1
+        else:
+            spj = 0
         if not title or not vtitle.match(title):
             return render.NewProblem('Title must be between 2 to 100 characters.')
         if not time or not vtime.match(time):
@@ -122,7 +127,7 @@ class NewProblem:
             return render.NewProblem('Must have sample input.')
         if not sampleout:
             return render.NewProblem('Must have sample output.')
-        problemid = db.Problem.Add(title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source)
+        problemid = db.Problem.Add(title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj)
         if problemid:
             return render.NewProblem('Added successfully! The new ProblemID is:'+str(problemid))
         else:

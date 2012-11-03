@@ -35,6 +35,10 @@ def RemoveFiles():
 def GetTasks():
     cur.execute('SELECT * FROM Submit WHERE SubmitStatus=0 ORDER BY SubmitID ASC')
     tasks = cur.fetchall()
+    for task in tasks:
+        cur.execute('SELECT SpecialJudge FROM Problem WHERE ProblemID='+str(task['ProblemID']))
+        tmp = cur.fetchall()
+        task['SpecialJudge'] = tmp[0]['SpecialJudge']
     return tasks
 
 def Compile(lang):
@@ -42,8 +46,11 @@ def Compile(lang):
     info = open('__compile_info.txt', 'r').read()
     return (os.path.exists('__a.out'), info)
 
-def GetDiff(ansfile):
-    exitcode = os.system('/home/cofun/cofun_standard_check "%s" "%s" > __diff.txt' % (ansfile, 'output.txt'))
+def GetDiff(spj, inputfile):
+    if spj:
+        exitcode = os.system('/home/cofun/data/%d/spj "%s" "%s" "%s" > __diff.txt' % (spj, inputfile, 'answer.txt', 'output.txt'))
+    else:
+        exitcode = os.system('/home/cofun/cofun_standard_check "%s" "%s" > __diff.txt' % ('answer.txt', 'output.txt'))
     diff = open('__diff.txt', 'r').read()
     return (exitcode, diff)
 
@@ -55,6 +62,7 @@ def Process(tasks):
         os.chdir('/home/cofun/tmp')
         RemoveFiles()
         lang = task['SubmitLanguage']
+        spj = task['ProblemID'] if task['SpecialJudge'] else None
         fsource = open('__source.'+EXTENSION[lang], 'w')
         fsource.write(task['SubmitCode'])
         fsource.close()
@@ -108,7 +116,8 @@ def Process(tasks):
                 res = 'RE'
                 final = 'RE'
             else:
-                (exitcode, diff) = GetDiff(basedir+config[1])
+                shutil.copyfile(basedir+config[1], '/home/cofun/tmp/answer.txt')
+                (exitcode, diff) = GetDiff(spj, basedir+config[0])
                 if exitcode:
                     res = 'WA'
                     final = 'WA'

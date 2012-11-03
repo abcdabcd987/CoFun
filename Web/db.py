@@ -46,8 +46,8 @@ class Member(object):
 
 class Problem(object):
     @staticmethod
-    def Add(title, desc, fin, fout, sin, sout, time, memory, hint, source):
-        return db.insert("Problem", ProblemTitle=title, ProblemDescription=desc, ProblemInput=fin, ProblemOutput=fout, ProblemSampleIn=sin, ProblemSampleOut=sout, ProblemTime=time, ProblemMemory=memory, ProblemHint=hint, ProblemSource=source)
+    def Add(title, desc, fin, fout, sin, sout, time, memory, hint, source, spj):
+        return db.insert("Problem", ProblemTitle=title, ProblemDescription=desc, ProblemInput=fin, ProblemOutput=fout, ProblemSampleIn=sin, ProblemSampleOut=sout, ProblemTime=time, ProblemMemory=memory, ProblemHint=hint, ProblemSource=source, SpecialJudge=spj)
 
     @staticmethod
     def GetList(offset, limit, userid):
@@ -81,7 +81,7 @@ class Problem(object):
 
     @staticmethod
     def Get(problemid):
-        res = db.select("Problem", what="ProblemID, ProblemTitle, ProblemDescription, ProblemInput, ProblemOutput, ProblemSampleIn, ProblemSampleOut, ProblemTime, ProblemMemory, ProblemHint, ProblemSource", where="ProblemID="+str(problemid))
+        res = db.select("Problem", where="ProblemID="+str(problemid))
         if not res:
             return None
         res = list(res)[0]
