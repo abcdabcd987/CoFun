@@ -36,8 +36,8 @@ $if contest and problem:
     $if contest.ContestStatus == 3:
         $ sp = ''
     $else:
-        $ sp = '/%d' % problem.ProblemID
-    <a class="btn btn-primary" href="/submit$sp/$contest.ContestID">Submit</a>
+        $ sp = '/%d' % contest.ContestID
+    <a class="btn btn-primary" href="/submit/$problem.ProblemID$sp">Submit</a>
     <section>
       <h2>Description</h2>
       <div class="markdown">$:problem.ProblemDescription</div>
@@ -69,7 +69,7 @@ $if contest and problem:
           <pre>$problem.ProblemSource</pre>
         </section>
     <section>
-      <a class="btn btn-primary" href="/submit$sp/$contest.ContestID">Submit</a>
+      <a class="btn btn-primary" href="/submit/$problem.ProblemID$sp">Submit</a>
     </section>
 $else:
     $var title: Not Found the Problem
