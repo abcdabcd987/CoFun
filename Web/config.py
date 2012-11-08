@@ -3,7 +3,7 @@ import web
 web.config.debug = False
 #web.config.debug = True
 
-VERSION = '0.3 git commit 32'
+VERSION = '0.3 git commit 33'
 
 CONFIG = {
     'dbtype':       'mysql',

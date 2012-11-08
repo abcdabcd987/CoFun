@@ -35,3 +35,18 @@ body {
 #status-table .progress {
   margin-bottom: 0;
 }
+
+.markdown {
+  text-indent: 2em;
+}
+
+.ajax-ball {
+  display: inline;
+  position: absolute;
+  margin-left: -13px;
+  margin-top: -5px;
+}
+
+.hidden {
+  display: hidden;
+}

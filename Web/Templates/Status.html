@@ -27,7 +27,10 @@ $if ajax:
                   $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
               $else:
                   $ stat = RESULTLIST[s.SubmitStatus]
-              <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
+              $if s.SubmitStatus > 100 or s.SubmitStatus == 0:
+                  <td id="stat-$s.SubmitID"><div class="ajax-ball hidden" id="ajaxdiv-$s.SubmitID"><img src="/static/ajax-jump-ball.gif" alt="Jumping ball"></div><div id="ajaxstat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></div></td>
+              $else:
+                <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
               $if s.SubmitStatus > 1:
                   <td id="score-$s.SubmitID">$s.SubmitScore</td>
                   <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
@@ -126,7 +129,10 @@ $else:
                       $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
                   $else:
                       $ stat = RESULTLIST[s.SubmitStatus]
-                  <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
+                  $if s.SubmitStatus > 100 or s.SubmitStatus == 0:
+                      <td id="stat-$s.SubmitID"><div class="ajax-ball hidden" id="ajaxdiv-$s.SubmitID"><img src="/static/ajax-jump-ball.gif" alt="Jumping ball"></div><div id="ajaxstat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></div></td>
+                  $else:
+                      <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
                   $if s.SubmitStatus > 1:
                       <td id="score-$s.SubmitID">$s.SubmitScore</td>
                       <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
@@ -164,7 +170,14 @@ $else:
           var ret = eval('('+data+')');
           wait = ""
           for (var i = 0; i < ret.length; ++i) {
-            $$("#stat-"+ret[i]["SubmitID"]).html(ret[i]["html"]);
+            if (ret[i]["SubmitStatus"] > 100 || ret[i]["SubmitStatus"] == 0) {
+              if (ret[i]["SubmitStatus"] > 100) {
+                $$("#ajaxdiv-"+ret[i]["SubmitID"]).removeClass("hidden");
+              }
+              $$("#ajaxstat-"+ret[i]["SubmitID"]).html(ret[i]["html"]);
+            } else {
+              $$("#stat-"+ret[i]["SubmitID"]).html(ret[i]["html"]);
+            }
             $$("#memory-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunMemory"]+"KB");
             $$("#time-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunTime"]+"MS");
             if (ret[i]["SubmitStatus"] === 0 || ret[i]["SubmitStatus"] > 100) {
