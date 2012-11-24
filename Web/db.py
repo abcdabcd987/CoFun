@@ -50,6 +50,10 @@ class Problem(object):
         return db.insert("Problem", ProblemTitle=title, ProblemDescription=desc, ProblemInput=fin, ProblemOutput=fout, ProblemSampleIn=sin, ProblemSampleOut=sout, ProblemTime=time, ProblemMemory=memory, ProblemHint=hint, ProblemSource=source, SpecialJudge=spj)
 
     @staticmethod
+    def Edit(probid, title, desc, fin, fout, sin, sout, time, memory, hint, source, spj):
+        return db.update("Problem", ProblemTitle=title, ProblemDescription=desc, ProblemInput=fin, ProblemOutput=fout, ProblemSampleIn=sin, ProblemSampleOut=sout, ProblemTime=time, ProblemMemory=memory, ProblemHint=hint, ProblemSource=source, SpecialJudge=spj, where="ProblemID="+str(probid))
+
+    @staticmethod
     def GetList(offset, limit, userid):
         res = list(db.select("Problem", what="ProblemID, ProblemTitle, ProblemSource", offset=offset, limit=limit, order="ProblemID"))
         if not res:
@@ -80,15 +84,16 @@ class Problem(object):
 #) ORDER BY ProblemID
 
     @staticmethod
-    def Get(problemid):
+    def Get(problemid, Markdown=True):
         res = db.select("Problem", where="ProblemID="+str(problemid))
         if not res:
             return None
         res = list(res)[0]
-        res.ProblemDescription = markdown2.markdown(res.ProblemDescription)
-        res.ProblemInput = markdown2.markdown(res.ProblemInput)
-        res.ProblemOutput = markdown2.markdown(res.ProblemOutput)
-        res.ProblemHint = markdown2.markdown(res.ProblemHint)
+        if Markdown:
+            res.ProblemDescription = markdown2.markdown(res.ProblemDescription)
+            res.ProblemInput = markdown2.markdown(res.ProblemInput)
+            res.ProblemOutput = markdown2.markdown(res.ProblemOutput)
+            res.ProblemHint = markdown2.markdown(res.ProblemHint)
         return res
 
     @staticmethod

@@ -487,5 +487,75 @@ class ContestCurrentRank:
         else:
             return render.ContestCurrentRank(contest, rank)
 
+class EditProblem:
+    def GET(self, problemid):
+        if session.userid == -1:
+            raise web.seeother('/')
+        try:
+            problemid = int(problemid)
+        except:
+            problemid = 0
+        prob = db.Problem.Get(int(problemid), Markdown=False)
+        if not prob:
+            return render.EditProblem(None)
+        problemid = str(problemid)
+        title = prob.ProblemTitle
+        time = prob.ProblemTime
+        memory = prob.ProblemMemory
+        desc = prob.ProblemDescription
+        formatin = prob.ProblemInput
+        formatout = prob.ProblemOutput
+        samplein = prob.ProblemSampleIn
+        sampleout = prob.ProblemSampleOut
+        hint = prob.ProblemHint
+        source = prob.ProblemSource
+        spj = prob.SpecialJudge
+        return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj)
+
+    def POST(self, problemid):
+        if session.userid == -1:
+            raise web.seeother('/')
+        try:
+            problemid = int(problemid)
+        except:
+            problemid = 0
+        if not db.Problem.Get(int(problemid)):
+            return render.EditProblem(None)
+        problemid = str(problemid)
+
+        i = web.input()
+        title = i.get('ProblemTitle', None)
+        time = i.get('ProblemTime', None)
+        memory = i.get('ProblemMemory', None)
+        desc = i.get('ProblemDescription', None)
+        formatin = i.get('ProblemInput', None)
+        formatout = i.get('ProblemOutput', None)
+        samplein = i.get('ProblemSampleIn', None)
+        sampleout = i.get('ProblemSampleOut', None)
+        hint = i.get('ProblemHint', None)
+        source = i.get('ProblemSource', None)
+        spj = i.get('SpecialJudge', None)
+        if spj == 'on':
+            spj = 1
+        else:
+            spj = 0
+        if not title or not vtitle.match(title):
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Title must be between 2 to 100 characters.')
+        if not time or not vtime.match(time):
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Time Limit must be between 100 and 999999.')
+        if not memory or not vmemory.match(time):
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Memory Limit must be between 100 and 999999.')
+        if not formatin:
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Must have Input Format.')
+        if not formatout:
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Must have Output Format.')
+        if not samplein:
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Must have sample input.')
+        if not sampleout:
+            return render.EditProblem(problemid, title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj, 'Must have sample output.')
+
+        db.Problem.Edit(int(problemid), title, desc, formatin, formatout, samplein, sampleout, time, memory, hint, source, spj)
+        raise web.seeother('/p'+problemid)
+
 if __name__ == '__main__':
     app.run()

@@ -1,0 +1,111 @@
+$def with (ProblemID, title=None, desc=None, fin=None, fout=None, sin=None, sout=None, time=None, memory=None, hint=None, source=None, spj=None, mesg=None)
+$var title: Edit the Problem
+$if ProblemID:
+    $var head:
+        <script src="/static/pagedown/Markdown.Converter.js"></script>
+        <script src="/static/pagedown/Markdown.Sanitizer.js"></script>
+        <script src="/static/pagedown/Markdown.Editor.js"></script>
+        <link href="/static/pagedown/pagedown.css" type="text/css" rel="stylesheet">
+    $if mesg:
+        <div class="alert alert-info">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <strong>INFO</strong><p>$mesg</p>
+        </div>
+    <form method="POST" action="/ep$ProblemID" name="LoginForm" class="form-horizontal">
+      <legend>Edit the Problem</legend>
+      <div class="control-group">
+        <label for="ProblemTitle" class="control-label">Title</label>
+        <div class="controls">
+          <input type="text" id="ProblemTitle" name="ProblemTitle" value="$title">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="ProblemTime">Time Limit</label>
+        <div class="controls">
+          <input type="text" id="ProblemTime" name="ProblemTime" value="$time">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="ProblemMemory">Memory Limit</label>
+        <div class="controls">
+          <input type="text" id="ProblemMemory" name="ProblemMemory" value="$memory">
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="ProblemSource" class="control-label">Source</label>
+        <div class="controls">
+          <input type="text" id="ProblemSource" name="ProblemSource" value="$source">
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="SpecialJudge">Special Judge</label>
+        <div class="controls">
+          $if spj:
+              <input type="checkbox" id="SpecialJudge" name="SpecialJudge" checked>
+          $else:
+              <input type="checkbox" id="SpecialJudge" name="SpecialJudge">
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="ProblemDescription" class="biglabel">Description</label>
+        <div class="wmd-panel">
+          <div id="wmd-button-bar-desc"></div>
+          <textarea class="wmd-input" id="wmd-input-desc" name="ProblemDescription">$desc</textarea>
+          <div id="wmd-preview-desc" class="wmd-panel wmd-preview"></div>
+        </div>
+      </div>
+      <div>
+        <label for="ProblemInput" class="biglabel">Input Format</label>
+        <div class="wmd-panel">
+          <div id="wmd-button-bar-input"></div>
+          <textarea class="wmd-input" id="wmd-input-input" name="ProblemInput">$fin</textarea>
+          <div id="wmd-preview-input" class="wmd-panel wmd-preview"></div>
+        </div>
+      </div>
+      <div>
+        <label for="ProblemOutput" class="biglabel">Output Format</label>
+        <div class="wmd-panel">
+          <div id="wmd-button-bar-output"></div>
+          <textarea class="wmd-input" id="wmd-input-output" name="ProblemOutput">$fout</textarea>
+          <div id="wmd-preview-output" class="wmd-panel wmd-preview"></div>
+        </div>
+      </div>
+      <div>
+        <label for="ProblemSampleIn" class="biglabel">SampleInput</label>
+        <textarea class="big-textarea" id="ProblemSampleIn" name="ProblemSampleIn">$sin</textarea>
+      </div>
+      <div>
+        <label for="ProblemSampleOut" class="biglabel">SampleOutput</label>
+        <textarea class="big-textarea" id="ProblemSampleOut" name="ProblemSampleOut">$sout</textarea>
+      </div>
+      <div>
+        <label for="ProblemHint" class="biglabel">Hint</label>
+        <div class="wmd-panel">
+          <div id="wmd-button-bar-hint"></div>
+          <textarea class="wmd-input" id="wmd-input-hint" name="ProblemHint">$hint</textarea>
+          <div id="wmd-preview-hint" class="wmd-panel wmd-preview"></div>
+        </div>
+      </div>
+      <div class="form-submit">
+        <input type="submit" id="submit" name="submit" value="Edit" class="btn btn-primary">
+      </div>
+    </form>
+    <script>
+    (function() {
+      var converter_desc = Markdown.getSanitizingConverter();
+      var editor_desc = new Markdown.Editor(converter_desc, '-desc');
+      editor_desc.run();
+      var converter_input = Markdown.getSanitizingConverter();
+      var editor_input = new Markdown.Editor(converter_input, '-input');
+      editor_input.run();
+      var converter_output = Markdown.getSanitizingConverter();
+      var editor_output = new Markdown.Editor(converter_output, '-output');
+      editor_output.run();
+      var converter_hint = Markdown.getSanitizingConverter();
+      var editor_hint = new Markdown.Editor(converter_hint, '-hint');
+      editor_hint.run();
+    }
+    )();
+    </script>
+$else:
+    <h1>Not Found</h1>
