@@ -1,0 +1,18 @@
+$def with (s1,s2,msg=None,more1=False,more2=False,pid=None,tid=None)
+$var title: Testdata#$tid Preview - p$pid
+$if msg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$msg</p>
+    </div>
+$else:
+    <h2>Input</h2>
+    <pre>$s1</pre>
+    $if more1:
+        <p>...Please Download to See More</p>
+    <a href="/download/p$(pid)t$(tid)in" class="btn btn-success">黑犇犇教你打馒头.in</a>
+    <h2>Output</h2>
+    <pre>$s2</pre>
+    $if more2:
+        <p>...Please Download to See More</p>
+    <a href="/download/p$(pid)t$(tid)out" class="btn btn-success">馒头教你打黑犇犇.out</a>

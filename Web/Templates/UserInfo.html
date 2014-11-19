@@ -1,0 +1,328 @@
+﻿$def with (user, problems, changes, seed, Changespre, Userpre, Changesnxt, Usernxt)
+$if user:
+  $var title: $user.UserName
+  $var head:
+      <script type="text/javascript" src="/static/highcharts.js"></script>
+      <script type="text/javascript" src="/static/exporting.js"></script>
+  $if changes:
+        <script>
+        $$(function () {
+          $$('#chart').highcharts({
+            title: {
+                text: '$user.UserName'
+            },
+            chart: {
+                height: 400,
+            },
+            tooltip:{
+              useHTML: true,
+              headerFormat: '',
+              pointFormat: "<center>{point.href}</center><center>{point.title}</center>Rank: {point.rank}<br/>Rating: {point.rating}{point.delta}",
+              footerFormat: '',
+            },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+                day: '%m-%d',
+                month: '%m-%d',
+                year: '%Y-%m-%d',
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Rating'
+            },
+            //gridLineWidth: 0,
+            labels: {
+                enabled: true
+            },
+            plotLines: [{ // mark the weekend
+                zIndex: 1,
+                color: 'green',
+                width: 1.5,
+                value: 1200,
+                label: {
+                    text: '普通',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: 'green',
+                        fontWeight: 'bold'
+                    }
+                }
+            },{ // mark the weekend
+                zIndex: 1,
+                color: 'cornflowerblue',
+                width: 1.5,
+                value: 1500,
+                label: {
+                    text: '上水道',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: 'cornflowerblue',
+                        fontWeight: 'bold'
+                    }
+                }
+            },{ // mark the weekend
+                zIndex: 1,
+                color: '#a0a',
+                width: 1.5,
+                value: 1700,
+                label: {
+                    text: '勇者',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: '#a0a',
+                        fontWeight: 'bold'
+                    }
+                }
+            },{ // mark the weekend
+                zIndex: 1,
+                color: '#a0a',
+                width: 1.5,
+                value: 1800,
+                label: {
+                    text: '来自异界的',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: '#a0a',
+                        fontWeight: 'bold'
+                    }
+                }
+            },{ // mark the weekend
+                zIndex: 1,
+                color: '#ff8c00',
+                width: 1.5,
+                value: 1900,
+                label: {
+                    text: '传说',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: '#ff8c00',
+                        fontWeight: 'bold'
+                    }
+                }
+            },{ // mark the weekend
+                zIndex: 1,
+                color: '#ff8c00',
+                width: 1.5,
+                value: 2050,
+                label: {
+                    text: '史诗',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: '#ff8c00',
+                        fontWeight: 'bold'
+                    }
+                }
+            },{ // mark the weekend
+                zIndex: 1,
+                color: 'red',
+                width: 1.5,
+                value: 2200,
+                label: {
+                    text: '王者',
+                    verticalAlign: 'bottom',
+                    textAlign: 'left',
+                    //x: -20,
+                    style: {
+                        fontSize: '15px',
+                        fontFamily: '微软雅黑',
+                        color: 'red',
+                        fontWeight: 'bold'
+                    }
+                }
+            }],
+            //tickPositions: [1000, 1200, 1500, 1700, 1800, 1900, 2050, 2200]
+        },
+            series: [
+            $if Changespre:
+              {
+                name: '$Userpre.UserName',
+                visible: false,
+                data: [
+                  $for change in reversed(Changespre):
+                    $ Title = GetTitle(change.EndRating)
+                    $ color = GetColor(change.EndRating)
+                    $ delta = change.sRatingDelta
+                    $if change.RatingDelta > 0:
+                      $ delta = '+' + delta
+                    $ delta = '(' + delta + ')'
+                    {x:Date.UTC($change.year, $change.month, $change.day), y:$change.EndRating, delta:'$delta', href:'<b><a href="/c$change.ContestID" style="font-family:微软雅黑;">$change.ContestTitle</a></b>', title:'<span class=$color style="font-family:微软雅黑;"><b>$Title</b> $Userpre.UserName</span>',rank:$change.Rank,rating:$change.EndRating},
+                ]
+              },
+            {
+              name: '$user.UserName',
+              data: [
+                $for change in reversed(changes):
+                  $ Title = GetTitle(change.EndRating)
+                  $ color = GetColor(change.EndRating)
+                  $ delta = change.sRatingDelta
+                  $if change.RatingDelta > 0:
+                    $ delta = '+' + delta
+                  $ delta = '(' + delta + ')'
+                  {x:Date.UTC($change.year, $change.month, $change.day), y:$change.EndRating, delta:'$delta', href:'<b><a href="/c$change.ContestID" style="font-family:微软雅黑;">$change.ContestTitle</a></b>', title:'<span class=$color style="font-family:微软雅黑;"><b>$Title</b> $user.UserName</span>',rank:$change.Rank,rating:$change.EndRating},
+              ]
+            }
+            $if Changesnxt:
+              ,{
+                name: '$Usernxt.UserName',
+                visible: false,
+                data: [
+                  $for change in reversed(Changesnxt):
+                    $ Title = GetTitle(change.EndRating)
+                    $ color = GetColor(change.EndRating)
+                    $ delta = change.sRatingDelta
+                    $if change.RatingDelta > 0:
+                      $ delta = '+' + delta
+                    $ delta = '(' + delta + ')'
+                    {x:Date.UTC($change.year, $change.month, $change.day), y:$change.EndRating, delta:'$delta', href:'<b><a href="/c$change.ContestID" style="font-family:微软雅黑;">$change.ContestTitle</a></b>', title:'<span class=$color style="font-family:微软雅黑;"><b>$Title</b> $Usernxt.UserName</span>',rank:$change.Rank,rating:$change.EndRating},
+                ]
+              }
+            ],
+            /*exporting: {
+                url:"http://export.hcharts.cn",
+            }*/
+          });
+        });			
+        </script>
+	
+  $ Color = GetColor(user.Rating)
+  $ Title = GetTitle(user.Rating)
+    <h3 class = "$Color" style="font-size: 30px;text-align:center;font-weight:normal;font-family: 微软雅黑;"><b>$Title</b>&nbsp;&nbsp;$user.UserName</h3>
+  <table class="pull-left" style="
+    line-height: 200%;
+    font-size: 14px;
+    font-family: 微软雅黑;
+    width: 70%;
+  ">
+    <colgroup><col class="rc1"><col class="rc2"></colgroup>
+    <tbody>
+      <tr><td class="rc1">Rating</td><td class="rc2 $Color">$user.Rating</td></tr>
+      <tr><td class="rc1">User ID</td><td class="rc2">$user.UserID</td></tr>
+      <tr><td class="rc1">Real Name</td><td class="rc2">$user.RealName</td></tr>
+      <tr><td class="rc1">User E-mail</td><td class="rc2">$user.UserEmail</td></tr>
+      <tr><td class="rc1">Solved</td><td class="rc2">$user.Solved</td></tr>
+      <tr><td class="rc1">Submit</td><td class="rc2">$user.Submit</td></tr>
+      <tr><td class="rc1">Ratio</td><td class="rc2">${user.Ratio}%</td></tr>
+      <tr><td class="rc1">Rank</td><td class="rc2">${user.Rank}</td></tr>
+      $if user.Signature:
+        <tr><td class="rc1">Signature</td><td class="rc2"style="word-break:break-all">$user.Signature</td></tr>
+    </tbody>
+  </table>
+    <img src="http://www.gravatar.com/avatar/$db.Utility.MD5(user.UserEmail.lower())?s=200&amp;r=X&amp;d=identicon" alt="$user.UserName" class="pull-right">
+  
+  $code:
+    random.seed(seed)
+    bcolor = ""
+    color = ""
+    a = 3166571
+    a = random.randint(0, 16777215)
+    for i in range(6):
+      t1 = a % 16
+      t2 = 15 - t1
+      if t1 < 10:
+        bcolor = chr(t1 + 48) + bcolor
+      else:
+        bcolor = chr(t1 - 10 + 65) + bcolor
+        
+      if t2 < 10:
+        color = chr(t2 + 48) + color
+      else:
+        color = chr(t2 - 10 + 65) + color
+      a /= 16
+    bcolor = "#" + bcolor
+    color = "#" + color
+  <div id="chart" style="min-width:700px;"></div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td height="10px"></td>
+      </tr>
+      <tr  style="color: ${color};background-color:${bcolor};">
+        <th class = "span2">Contest ID</th>
+        <th>Title</th>
+        <th class = "span1">Rank</th>
+        <th class = "span2">Rating(Delta)</th>
+        <th class = "span2_5">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      $if changes:
+        $for change in changes:
+          $ Color2 = GetColor(change.EndRating)
+          $ Color3 = Color2 + "-back"
+          <tr class = "$Color3">
+          <td>$change.ContestID</td>
+          <td><a href="/c$change.ContestID">$change.ContestTitle</a></td>
+          <td>$change.Rank</td>
+          $if change.RatingDelta > 0:
+            <td class="$Color2" style="font-weight:bold;">${change.EndRating}(+${change.RatingDelta})</td>
+          $else:
+            <td class="$Color2" style="font-weight:bold;">${change.EndRating}(${change.RatingDelta})</td>
+          <td>$change.EndTime</td>
+          </tr>
+    </tbody>
+  </table>
+  
+  
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td height="10px"></td>
+      </tr>
+      <tr  style="color: ${color};background-color:${bcolor};">
+        <th class = "span2">Problem ID</th>
+        <th class = "span4">Title</th>
+        <th class = "span3">Source</th>
+        <th>User Submit</th>
+        <th>Solved</th>
+        <th>Submit</th>
+        <th>Ratio</th>
+      </tr>
+    </thead>
+    <tbody>
+      $if problems:
+        $for problem in problems:
+          $if problem.ProblemID == 1122:
+            <tr class="alert alert-error">
+          $else:
+            <tr class="">
+            
+          <td>$problem.ProblemID</td>
+          <td><a href="/p$problem.ProblemID">$problem.ProblemTitle</a></td>
+          <td>$problem.ProblemSource</td>
+          <td>$problem.UserSubmit</td>
+          <td>$problem.Solved</td>
+          <td>$problem.Submit</td>
+          <td>$problem.Ratio</td>
+          </tr>
+    </tbody>
+  </table>
+      
+$else:
+    $var title: Requested User Not Found or Hidden
+    <h1>Requested User Not Found or Hiddenn</h1>

@@ -27,12 +27,14 @@ $if contest:
       <dd>$:contest.ContestDescription</dd>
     </dl>
     <div class="btn-group">
-      $if contest.ContestStatus == 3:
+      $if contest.ContestStatus == 3 or db.Contest.IsPrincipal(contest.ContestID, session.userid):
           <a class="btn btn-danger" href="/cr$contest.ContestID#rank">Rank</a>
-          <a class="btn btn-warning" href="/c$contest.ContestID/rank#rank">Current Rank</a>
+          <a class="btn btn-warning" href="/c$contest.ContestID/rank/#rank">Current Rank</a>
       $else:
           <button class="btn">Rank</button>
           <button class="btn">Current Rank</button>
+      $if db.Contest.IsPrincipal(contest.ContestID, session.userid) and db.datetime.datetime.now() <= contest.ContestEndTime:
+          <a class="btn btn-success" href="/ec$contest.ContestID">Edit</a>
     </div>
     <table class="table table-hover">
       <caption>
@@ -46,7 +48,7 @@ $if contest:
         </tr>
       </thead>
       <tbody>
-        $if problems and contest.ContestStatus != 1:
+        $if problems and (contest.ContestStatus != 1 or db.Contest.IsPrincipal(contest.ContestID, session.userid)):
             $for prob in problems:
                 <tr$:DONE[prob.ProblemDone][1]>
                   <td>$loop.index</td>
@@ -56,5 +58,5 @@ $if contest:
       </tbody>
     </table>
 $else:
-    $var title: Not Found the Contest
-    <h1>Not Found the Contest</h1>
+    $var title: Contest Not Found
+    <h1>Contest Not Found</h1>

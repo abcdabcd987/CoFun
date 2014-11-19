@@ -36,7 +36,10 @@
 
         image: "Image <img> Ctrl+G",
         imagedescription: "enter image description here",
-        imagedialog: "<p><b>Insert Image</b></p><p>Need to <a href='/upload/' target='_blank' class='label label-info'>Upload</a> ?</p><code>http://example.com/images/diagram.jpg \"optional title\"</code>",
+        //imagedialog: "<p><b>Insert Image</b></p><p>Need to <a href='/upload/' target='_blank' class='label label-info'>Upload</a> ?</p><code>http://example.com/images/diagram.jpg \"optional title\"</code>",
+        //imagedialog: "<legend>Upload</legend><div class=\"controls\"><input type=\"file\" id=\"UploadFile\" name=\"UploadFile\" placeholder=\"UploadFile\"></div><div class=\"demo\">  <div id=\"drop_area\" ondragenter=\"return false\" ondragover=\"FileDragHover(event)\" ondragleave=\"FileDragHover(event)\" ondrop=\"writefile(event)\">    或者拖拽图片至此  </div></div><div class=\"form-submit\">  <button onclick=\"uploadFile()\" class=\"btn btn-primary\">Submit</button></div><br><div class=\"progress progress-success progress-striped\">  <div id=\"progress\" class=\"bar\" style=\"width: 0%;\"></div></div>",
+        //imagedialog: "<iframe name=\"filepicker_dialog\" id=\"filepicker_dialog\" border=\"0\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" src=\"/upload/\" style=\"width: 100%; height: 400px; border: none; position: relative;\"></iframe>",
+        imagedialog: "<div style=\"height: 350px; overflow-y: auto; margin-bottom: 15px; background-color: white;\"><div class=\"container\" id=\"uploadimage-container\" style=\"margin-top: 20px; width: 90%; padding-right: 5px;\"><style type=\"text/css\">    .bar {      height: 18px;      background: green;    }  </style><legend>Upload</legend><!--<div class=\"form-horizontal\">  <div class=\"control-group\">    <label for=\"UploadFile\" class=\"control-label\">Image:</label>-->    <div class=\"controls\">      <input type=\"file\" id=\"UploadFile\" name=\"UploadFile\" placeholder=\"UploadFile\">    </div>  <!--</div></div>--><div class=\"demo\">  <div id=\"drop_area\"  ondragenter=\"return false\" ondragover=\"FileDragHover(event)\" ondragleave=\"FileDragHover(event)\" ondrop=\"writefile(event)\">    或者拖拽图片至此  </div></div><div class=\"form-submit\">  <button onclick=\"uploadFile()\"  id=\"UploadFileButton\" class=\"btn btn-primary\">Submit</button></div><br><div class=\"progress progress-success progress-striped\">  <div id=\"progress\" class=\"bar\" style=\"width: 0%;\"></div></div></div></div>",
 
         olist: "Numbered List <ol> Ctrl+O",
         ulist: "Bulleted List <ul> Ctrl+U",
@@ -1096,8 +1099,8 @@
             else {
                 // Fixes common pasting errors.
                 text = text.replace(/^http:\/\/(https?|ftp):\/\//, '$1://');
-                if (!/^(?:https?|ftp):\/\//.test(text))
-                    text = 'http://' + text;
+                //if (!/^(?:https?|ftp):\/\//.test(text))
+                    //text = 'http://' + text;
             }
 
             dialog.parentNode.removeChild(dialog);
@@ -1114,15 +1117,20 @@
             // The main dialog box.
             dialog = doc.createElement("div");
             dialog.className = "wmd-prompt-dialog";
-            dialog.style.padding = "10px;";
+            dialog.style.padding = "10px;";            
             dialog.style.position = "fixed";
-            dialog.style.width = "400px";
+            dialog.style.width = "450px";
             dialog.style.zIndex = "1001";
 
             // The dialog text.
             var question = doc.createElement("div");
             question.innerHTML = text;
-            question.style.padding = "5px";
+            question.style.padding = "5px";/*
+            question.style.height = "350px";
+            question.style.overflowY = "auto";
+            question.style.backgroundColor = "white";
+            question.style.marginBottom = "15px";
+            question.style.paddingBottom = "50px";*/
             dialog.appendChild(question);
 
             // The web form container for the text box and buttons.
@@ -1139,6 +1147,7 @@
 
             // The input text box
             input = doc.createElement("input");
+            input.id = "defaultInput";
             input.type = "text";
             input.value = defaultInputText;
             style = input.style;

@@ -1,0 +1,125 @@
+$def with (series, problems, mesg=None)
+$if series:
+    $var title: Edit the Series
+    $code:
+        DONE = {
+            0:    ('', ''),
+            1:    ('<span class="label label-success">AC</span>', ' class="alert alert-success"'),
+            2:    ('<span class="label label-important">WA</span>', ' class="alert alert-error"'),
+        }
+    $var head:
+        <script src="/static/pagedown/Markdown.Converter.js"></script>
+        <script src="/static/pagedown/Markdown.Sanitizer.js"></script>
+        <script src="/static/pagedown/Markdown.Editor.js"></script>
+        <link href="/static/pagedown/pagedown.css" type="text/css" rel="stylesheet">
+        <script src="/static/UploadImage.js"></script>
+    $if mesg:
+        <div class="alert alert-info">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <strong>INFO</strong><p>$mesg</p>
+        </div>
+    <form method="POST" name="EditSeriesForm" class="form-horizontal">
+      <legend>Edit the Series</legend>
+      <div class="control-group">
+        <label for="SeriesTitle" class="control-label">Title</label>
+        <div class="controls">
+          <input type="text" id="SeriesTitle" name="SeriesTitle" placeholder="Series Title" value="$series.SeriesTitle">
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="SeriesDescription" class="biglabel">Description</label>
+        <div class="wmd-panel">
+          <div id="wmd-button-bar-desc"></div>
+          <textarea class="wmd-input" id="wmd-input-desc" name="SeriesDescription">$:series.SeriesDescription</textarea>
+          <div id="wmd-preview-desc" class="wmd-panel wmd-preview"></div>
+        </div>
+      </div>
+      <div>
+        <a class="btn btn-danger" href="/series$series.SeriesID/rank#rank">Rank</a>
+      </div>
+      <table class="table table-hover">
+        <caption>
+          <h2>Problems</h2>
+          <p>请通过拖动来调整顺序</p>
+        </caption>
+        <thead>
+          <tr>
+            <th class="span1">#</th>
+            <th class="span1"></th>
+            <th>Problem</th>
+            <th>Source</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          $if problems:
+              $for prob in problems:
+                  <tr$:{DONE[prob.ProblemDone][1]} id="$loop.index" draggable="true" ondragstart="dragStart(event);" ondrop="drop(event);" ondragover="allowDrop(event)">
+                    <td>$loop.index</td>
+                    <td>$:DONE[prob.ProblemDone][0]</td>
+                    <td><a href="/p$prob.ProblemID">$prob.ProblemTitle</a></td>
+                    <td>$prob.ProblemSource</td>
+                    <td style="width: 1%;"><input style="width: 100%;" type="checkbox" name="Delete" value="$prob.ProblemID"></td>
+                  </tr>
+        </tbody>
+      </table>
+      <h4>Add problems here</h4>
+      <input type="text" id="ProblemList" name="ProblemList" placeholder="e.g. 1000|1003|1034|1111">
+      <div class="form-submit">
+        <input type="submit" id="submit" name="submit" value="Edit" class="btn btn-primary" onclick="Submit(event, this);">
+      </div>
+    </form>
+    <script>
+      var flag=false;
+      (function() {
+        var converter_desc = Markdown.getSanitizingConverter();
+        var editor_desc = new Markdown.Editor(converter_desc, '-desc');
+        editor_desc.run();
+      }
+      )();
+      function dragStart(e) {
+        //console.log('drag start');
+        e.dataTransfer.setData("Text", e.target.id);
+        e.dataTransfer.effectAllowed = 'move';
+        //e.dataTransfer.setDragImage = 
+      }
+      function allowDrop(event) {
+        //console.log('allow drop');
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      }
+      function drop(e) {
+        e.preventDefault();
+        var data = e.dataTransfer.getData("Text");
+        if ($$(e.target).parent().attr("id") == data) return;
+        if ($$(e.target).parent().attr("id") == null) return;
+        flag = true;
+        $$($$(e.target).parent()).after(document.getElementById(data));
+      }
+      function Submit(e,th) {
+        e.preventDefault();
+        var x = $$("table").find("a").toArray();
+        var y = $$("form").serialize();
+        $$(th).attr("disabled","");
+        if (flag)
+        for (var i = 0; i < x.length; ++i) {
+          y += "&problems=" + $$(x[i]).attr("href").substr(2,10);
+        }
+        $$.post("", y, 
+          function(data){
+            data = eval('('+data+')');
+            alert("Data Loaded: " + data["mesg"]);
+            if (data["flag"]) location.href = '/series$series.SeriesID';
+            else $$(th).attr("disabled",false);
+          });
+      }
+    </script>
+$else:
+    $var title: Series Not Found
+    $if mesg:
+        <div class="alert alert-warning">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <strong>Warning!</strong><p>$mesg</p>
+        </div>
+    <h1>Series Not Found</h1>
+    

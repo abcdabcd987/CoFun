@@ -1,29 +1,4 @@
-$def with ()
-$var title: Upload File
-<legend>Upload</legend>
-<!--<div class="form-horizontal">
-  <div class="control-group">
-    <label for="UploadFile" class="control-label">Image:</label>-->
-    <div class="controls">
-      <input type="file" id="UploadFile" name="UploadFile" placeholder="UploadFile">
-    </div>
-  <!--</div>
-</div>-->
-<div class="demo">
-  <div id="drop_area"  ondragenter="return false" ondragover="FileDragHover(event)" ondragleave="FileDragHover(event)" ondrop="writefile(event)">
-    或者拖拽图片至此
-  </div>
-</div>
-<div class="form-submit">
-  <button onclick="uploadFile()" id="UploadFileButton" class="btn btn-primary">Submit</button>
-</div>
-<br>
-<div class="progress progress-success progress-striped">
-  <div id="progress" class="bar" style="width: 0%;"></div>
-</div>
-<script type="text/javascript">
      var xhr = null, res = null, uploading = false;
-     //alert(document.getElementById('UploadFile').files);
      function fileSelected(file) {
         var files = file.files, length = files.length, fid;
         if (length > 0) {
@@ -41,7 +16,8 @@ $var title: Upload File
       function done() {
           document.getElementById('UploadFile').value = "";
           setTimeout("document.getElementById('progress').style.width = \"0%\"",1000);
-          setTimeout("$$(\".container\").prepend(res[\"htm\"]);",100);
+          setTimeout("$(\"#uploadimage-container\").prepend(res[\"htm\"]);",100);
+          $("#defaultInput")[0].value = res["href"];
       }
       
       function uploadFile() {
@@ -102,10 +78,10 @@ $var title: Upload File
         }
       }
       function writefile(e){
-          e.target.className = (e.type == "dragover" ? "hover" : "");
           e.stopPropagation();
           e.preventDefault();
           document.getElementById('UploadFile').files = e.dataTransfer.files;
+          e.target.className = (e.type == "dragover" ? "hover" : "");
       }
       
 	    function FileDragHover(e) {
@@ -113,5 +89,3 @@ $var title: Upload File
 		    e.preventDefault();
 		    e.target.className = (e.type == "dragover" ? "hover" : "");
 	    }
-
-</script>

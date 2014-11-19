@@ -5,6 +5,7 @@ $var head:
     <script src="/static/pagedown/Markdown.Sanitizer.js"></script>
     <script src="/static/pagedown/Markdown.Editor.js"></script>
     <link href="/static/pagedown/pagedown.css" type="text/css" rel="stylesheet">
+    <script src="/static/UploadImage.js"></script>
 $if mesg:
     <div class="alert alert-info">
       <button type="button" class="close" data-dismiss="alert">×</button>
@@ -36,6 +37,19 @@ $if mesg:
       <input type="text" id="ContestPrincipal" name="ContestPrincipal" value="$session.username">
     </div>
   </div>
+  $if db.Member.GetLevel(session.userid) == 10:
+      <div class="control-group">
+        <label for="UpRating" class="control-label">UpRating</label>
+        <div class="controls">
+          <input type="text" id="UpRating" name="UpRating" value="6.18">
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="DownRating" class="control-label">DownRating</label>
+        <div class="controls">
+          <input type="text" id="DownRating" name="DownRating" value="3.14">
+        </div>
+      </div>
   <div class="control-group">
     <label for="ProblemList" class="control-label">Problems</label>
     <div class="controls">

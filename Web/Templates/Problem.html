@@ -10,9 +10,16 @@ $if problem:
             <dt>Judge</dt><dd><span class="label label-important">Special Judge</span>
         $else:
             <dt>Judge</dt><dd><span class="label">Standard Judge</span>
+        <dt>Solved</dt><dd>$problem.Solved</dd>
+        <dt>Submit</dt><dd>$problem.Submit</dd>
       </dl>
     </section>
-    <a class="btn btn-primary" href="/submit/$problem.ProblemID">Submit</a>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="/submit/$problem.ProblemID">Submit</a>
+      <a class="btn btn-success" href="/status/?pid=${problem.ProblemID}&uid=&lang=&stat=&cid=">Status</a>
+      $if db.Member.GetLevel(session.userid) >= 1:
+            <a class="btn btn-danger" href="/ep$problem.ProblemID">Edit</a>
+    </div>
     <section>
       <h2>Description</h2>
       <div class="markdown">$:problem.ProblemDescription</div>
@@ -44,8 +51,39 @@ $if problem:
           <pre>$problem.ProblemSource</pre>
         </section>
     <section>
-      <a class="btn btn-primary" href="/submit/$problem.ProblemID">Submit</a>
+      <div class="btn-group">
+        <a class="btn btn-primary" href="/submit/$problem.ProblemID">Submit</a>
+        <a class="btn btn-success" href="/status/?pid=${problem.ProblemID}&uid=&lang=&stat=&cid=">Status</a>
+        $if db.Member.GetLevel(session.userid) >= 1:
+              <a class="btn btn-danger" href="/ep$problem.ProblemID">Edit</a>
+      </div>
     </section>
+    <script type="text/javascript">
+    var uyan_config = {
+                 'su':'p$problem.ProblemID',
+                 'du':'cofun.org'
+    };
+    </script>
+    <h2>Discuss</h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'cofun'; // required: replace example with your forum shortname
+        var disqus_identifier = 'p$problem.ProblemID';
+        var disqus_url = 'http://cofun.org/p$problem.ProblemID';
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <!-- UY BEGIN
+    <div id="uyan_frame"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=1976995"></script>
+    UY END -->
 $else:
-    $var title: Not Found Requested Problem or Hidden
-    <h1>Not Found Requested Problem or Hidden</h1>
+    $var title: Requested Problem Not Found or Hidden
+    <h1>Requested Problem Not Found or Hidden</h1>

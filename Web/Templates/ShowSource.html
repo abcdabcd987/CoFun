@@ -2,8 +2,25 @@ $def with (detail, results)
 $var title: Show Source
 $var head: 
     <link href="/static/google-code-prettify/prettify.css" type="text/css" rel="stylesheet">
-$if not detail or detail.SubmitStatus == -1:
+$if not detail or detail.SubmitStatus == -1 and detail.UserID != session.userid:
     <h1>Hidden or Not Found</h1>
+$elif detail.SubmitStatus == -1:
+    <h1>Submit in detail</h1>
+    <dl class="dl-horizontal pull-left">
+      <dt>Problem ID</dt><dd><a href="/p$detail.ProblemID">$detail.ProblemID</a></dd>
+      <dt>User</dt><dd>$detail.UserName</dd>
+      <dt>Language</dt><dd>$:LANGUAGELIST[detail.SubmitLanguage]</dd>
+    </dl>
+    <img src="http://www.gravatar.com/avatar/$db.Utility.MD5(detail.UserEmail.lower())?s=128&amp;r=X&amp;d=identicon" alt="$detail.UserName" class="pull-right">
+    <div class="clearfix"></div>
+    <h2>Source Code</h2>
+    <pre class="prettyprint">$detail.SubmitCode</pre>
+    <script src="/static/google-code-prettify/prettify.js"></script>
+    <script>
+    $$(window).load(function(){
+         prettyPrint();
+    })
+    </script>
 $else:
     <h1>Submit in detail</h1>
     <dl class="dl-horizontal pull-left">
@@ -32,7 +49,7 @@ $else:
             $for r in results:
                 <tr>
                   <td>$loop.index</td>
-                  <td>$:RESULTLIST[r.Result]
+                  <td><a href="/testdata/p$(detail.ProblemID)t$loop.index">$:RESULTLIST[r.Result]</a>
                   $if r.Result == 4:
                       <pre>$r.Diff</pre>
                   </td>

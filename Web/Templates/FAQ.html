@@ -1,0 +1,44 @@
+$var title: FAQ
+$var head: 
+    <link href="/static/google-code-prettify/prettify.css" type="text/css" rel="stylesheet">
+<h1 class="center">FAQ</h1>
+<h2>如何写SPJ？</h2>
+<p>第一个参数是标准输入，第二个是标准输出，第三个是选手输出。</p>
+<p>程序返回0代表AC，否则如果返回值<=5且大于0，则是WA，错误信息直接输出到屏幕即可</p>
+<p>下面是一个范例，标准输出随机0 or 1</p>
+<pre class="prettyprint">
+#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;ctime&gt;
+#include &lt;string&gt;
+#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cmath&gt;
+using std::string;
+using std::ifstream;
+using std::min;
+using std::cout;
+using std::endl;
+int main(int argc, char* argv[])
+{
+  int a = time(0);
+  while(a==time(0));
+  ifstream std(argv[2]);
+  ifstream out(argv[3]);
+  char xx;
+  char x;
+  std&gt;&gt;xx;
+  srand(a);
+  out&gt;&gt;x;
+  int y = x - '0';
+  if (y != rand()%2) return 1;
+  return 0;
+}
+</pre>
+<script src="/static/google-code-prettify/prettify.js"></script>
+<script>
+$$(window).load(function(){
+     prettyPrint();
+})
+</script>
