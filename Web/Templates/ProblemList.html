@@ -33,15 +33,21 @@ $code:
       <th></th>
       <th>Title</th>
       <th>Source</th>
+      <th>Solved</th>
+      <th>Submit</th>
+      <th>AC%</th>
     </tr>
   </thead>
   <tbody>
     $for problem in problems:
         <tr$:DONE[problem.ProblemDone][1]>
-          <td class="span2">$problem.ProblemID</td>
+          <td class="span">$problem.ProblemID</td>
           <td class="span1">$:DONE[problem.ProblemDone][0]</td>
           <td><a href="/p$problem.ProblemID">$problem.ProblemTitle</a></td>
           <td class="span4">$problem.ProblemSource</td>
+          <td class="span1">$problem.Solved</td>
+          <td class="span1">$problem.Submit</td>
+          <td class="span1">$problem.Ratio</td>
         </tr>
   </tbody>
 </table>

@@ -1,0 +1,57 @@
+$def with (info, mesg=None)
+$var title: Update Your Info
+$if mesg:
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong><p>$mesg</p>
+    </div>
+<form method="POST" action="/modifyuser/" name="ModifyForm" class="form-horizontal">
+  <legend>Modify</legend>
+  <!--div class="control-group">
+    <label for="Username" class="control-label">Username</label>
+    <div class="controls">
+      <input type="text" id="Username" name="Username" placeholder="Username" value="$info['UserName']">
+    </div>
+  </div-->
+  <div class="control-group">
+    <label for="Realname" class="control-label">Realname</label>
+    <div class="controls">
+      <input type="text" id="Realname" name="Realname" placeholder="Realname" value="$info['RealName']">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="Password" class="control-label">Password</label>
+    <div class="controls">
+      <input type="password" id="Password" name="Password" placeholder="Password">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="NePasswd" class="control-label">New-Password</label>
+    <div class="controls">
+      <input type="password" id="NePasswd" name="NePasswd" placeholder="Blank if there's no need to change it">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="RePassword" class="control-label">Re-Password</label>
+    <div class="controls">
+      <input type="password" id="RePasswd" name="RePasswd" placeholder="New Password, again">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="Signature" class="control-label">Signature Line</label>
+    <div class="controls">
+      <textarea type="Signature" id="Signature" name="Signature" placeholder="Signature" rows="8">$info['Signature']</textarea>
+    </div>
+  </div>
+  <div class="form-submit">
+    <input type="submit" id="submit" name="submit" value="Update" class="btn btn-primary">
+  </div>
+</form>
+<script>
+(function() {
+  var converter_desc = Markdown.getSanitizingConverter();
+  var editor_desc = new Markdown.Editor(converter_desc, '-signature');
+  editor_desc.run();
+}
+)();
+</script>

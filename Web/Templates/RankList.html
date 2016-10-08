@@ -1,0 +1,77 @@
+$def with (ranklist, page, count)
+$var title: Ranklist
+
+<table class="table table-hover">
+  <caption>
+    <h2>Ranklist</h2>
+    <div class="pagination">
+      <ul>
+        $if page == 1:
+            <li class="disabled"><a href="#">Prev</a></li>
+        $else:
+            <li><a href="/ranklist/${page-1}">Prev</a></li>
+        $for i in xrange(1, count+1):
+            $if page == i:
+                <li class="active"><a href="/ranklist/$i">$i</a></li>
+            $else:
+                <li><a href="/ranklist/$i">$i</a></li>
+        $if page == count:
+            <li class="disabled"><a href="#">Next</a></li>
+        $else:
+            <li><a href="/ranklist/${page+1}">Next</a></li>
+      </ul>
+    </div>
+  </caption>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th></th>
+      <th>User</th>
+      <th>Signature</th>
+      <th>Rating</th>
+      <th>AC</th>
+      <th>Submit</th>
+      <th>AC%</th>
+    </tr>
+  </thead>
+  <tbody>
+	$ i=-1
+    $for user in ranklist:
+        $ i=i+1		
+		$ Ratio=0.0	
+		$if user.Submit:
+			$ Ratio = ("%.1f" % float(user.Solved * 100.0 / user.Submit))
+		$ cls=""
+		$ Rank = (page-1)*CONFIG['rankrows']+i
+		$ Color = GetColor(user["Rating"])
+		
+		$if Color == "user-red":
+			$ cls="user-red-back"
+			
+		$if Color == "user-orange":
+			$ cls="user-orange-back"
+			
+		$if Color == "user-green":
+			$ cls="user-green-back"
+			
+		$if Color == "user-blue":
+			$ cls="user-blue-back"
+			
+		$if Color == "user-violet":
+			$ cls="user-violet-back"
+			
+		$if Color == "user-gray":
+			$ cls="user-gray-back"
+			
+		<tr class="$cls $Color">
+			<td class="span1">$Rank</td>
+			<td class="span0"><img src="http://www.gravatar.com/avatar/$db.Utility.MD5(user.UserEmail.lower())?s=32&amp;r=X&amp;d=identicon" alt="$user.UserName" class="pull-right"></td>
+			<td class="usercol span3" style="word-break:break-all;font-weight:bold">$:{GetUserHtml(user.Rating, user.UserName+"("+user.RealName+")", user.UserID)}</a></td>
+			<td style="word-break:break-all">$user.Signature</td>
+			<td class="span1">$user.Rating</td>
+			<td class="span1">$user.Solved</td>
+			<td class="span1">$user.Submit</td>
+			<td class="span1">${Ratio}%</td>
+        </tr>
+  </tbody>
+</table>

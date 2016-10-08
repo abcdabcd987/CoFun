@@ -1,4 +1,4 @@
-$def with (ProblemID, title=None, desc=None, fin=None, fout=None, sin=None, sout=None, time=None, memory=None, hint=None, source=None, spj=None, mesg=None)
+$def with (ProblemID, title=None, desc=None, fin=None, fout=None, sin=None, sout=None, time=None, memory=None, hint=None, source=None, spj=None, datacfg=None, code=None, mesg=None, compile_info=None)
 $var title: Edit the Problem
 $if ProblemID:
     $var head:
@@ -6,10 +6,14 @@ $if ProblemID:
         <script src="/static/pagedown/Markdown.Sanitizer.js"></script>
         <script src="/static/pagedown/Markdown.Editor.js"></script>
         <link href="/static/pagedown/pagedown.css" type="text/css" rel="stylesheet">
+        <script src="/static/UploadImage.js"></script>
+        <script src="/static/UploadZip.js"></script>
     $if mesg:
         <div class="alert alert-info">
           <button type="button" class="close" data-dismiss="alert">×</button>
           <strong>INFO</strong><p>$mesg</p>
+          $if compile_info:
+              <pre>$:compile_info</pre>
         </div>
     <form method="POST" action="/ep$ProblemID" name="LoginForm" class="form-horizontal">
       <legend>Edit the Problem</legend>
@@ -85,6 +89,50 @@ $if ProblemID:
           <textarea class="wmd-input" id="wmd-input-hint" name="ProblemHint">$hint</textarea>
           <div id="wmd-preview-hint" class="wmd-panel wmd-preview"></div>
         </div>
+      </div>
+      <a name="upload"></a>
+      <div style="height:40px;"></div>
+      <label for="Upload Data" class="biglabel">Upload Data</label>
+      <br>  
+      <p>请将数据打包成zip文件然后上传</p>
+      <input type="file" id="UploadFile_zip" name="UploadFile" placeholder="UploadFile" onchange="uploadFile_zip(null,'/uploaddata/p$ProblemID')" >
+      <div class="demo">
+        <div id="drop_area"  ondragenter="return false" ondragover="FileDragHover(event)" ondragleave="FileDragHover(event)" ondrop="writefile_zip(event)">
+          或者拖拽zip文件至此
+        </div>
+      </div>
+      <div class="form-submit">
+        <button onclick="uploadFile_zip(event,'/uploaddata/p$ProblemID')" id="UploadFileButton_zip" class="btn btn-danger" disabled="disabled">Abort</button>
+      </div>
+      <br>
+      <div class="progress progress-success progress-striped">
+        <div id="progress_zip" class="bar" style="width: 0%;"></div>
+      </div>
+      <div>
+        <label for="DataConfig" class="biglabel">DataConfig</label>
+        <br>
+        <div class="btn-group">
+          <a class="btn btn-success" onclick="config(0, '/uploaddata/p$ProblemID')">Smart Config</a>
+          <a class="btn btn-primary" onclick="config(1, '/uploaddata/p$ProblemID')">Default Config</a>
+          <a class="btn btn-info" onclick="config(2, '/uploaddata/p$ProblemID')">Original Config</a>
+        </div>
+        <br>
+        <textarea class="big-textarea" id="DataConfig" name="DataConfig" placeholder="stdin_i|stdout_i|timelimit|memorylimit|score  (no blank lines, including the end)       eg:   ab1.in|ab1.out|1000|131072|25">$datacfg</textarea>
+      </div>
+      <br>
+      <legend>Speacial Judge<a href='/faq/'>?</a></legend>
+      <div class="control-group">
+        <label for="SubmitLanguage" class="control-label">Language</label>
+        <div class="controls">
+        <select name="SubmitLanguage">
+          <option value="1" $db.Data.GetSpjLang(ProblemID, 1)>C</option>
+          <option value="2" $db.Data.GetSpjLang(ProblemID, 2)>C++</option>
+          <option value="3" $db.Data.GetSpjLang(ProblemID, 3)>Free Pascal</option>
+        </select>
+      </div>
+      </div>
+      <div>
+        <textarea name="SubmitCode" class="big-textarea" placeholder="Leave it blank if there's no spj">$:code</textarea>
       </div>
       <div class="form-submit">
         <input type="submit" id="submit" name="submit" value="Edit" class="btn btn-primary">

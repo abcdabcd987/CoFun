@@ -1,0 +1,148 @@
+$def with (cid, contest, problems, mesg=None)
+$code:
+    CONTESTSTATUS = {
+        1:    ('label label-success', 'Ready'),
+        2:    ('label label-warning', 'Live'),
+        3:    ('label', 'Done'),
+    }
+    DONE = {
+        0:    ('', ''),
+        1:    ('<span class="label label-success">AC</span>', ' class="alert alert-success"'),
+        2:    ('<span class="label label-important">WA</span>', ' class="alert alert-error"'),
+        3:    ('<span class="label label-inverse">Submittid</span>', ' class="alert alert-info"'),
+    }
+$var title: Edit the Contest
+$var head:
+    <script src="/static/pagedown/Markdown.Converter.js"></script>
+    <script src="/static/pagedown/Markdown.Sanitizer.js"></script>
+    <script src="/static/pagedown/Markdown.Editor.js"></script>
+    <link href="/static/pagedown/pagedown.css" type="text/css" rel="stylesheet">
+    <script src="/static/UploadImage.js"></script>
+$if mesg:
+    <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>INFO</strong><p>$mesg</p>
+    </div>
+<form method="POST" action="/ec$cid" name="NewContestForm" class="form-horizontal">
+  <legend>Edit the Contest</legend>
+  <div class="control-group">
+    <label for="ContestTitle" class="control-label">Title</label>
+    <div class="controls">
+      <input type="text" id="ContestTitle" name="ContestTitle" placeholder="Contest Title" value="$contest['ContestTitle']">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="ContestStime">Start Time</label>
+    <div class="controls">
+      <input type="text" id="ContestStime" name="ContestStime" placeholder="yyyy-mm-dd hh:mm:ss" value="$contest['ContestStartTime']">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="ContestEtime">End Time</label>
+    <div class="controls">
+      <input type="text" id="ContestEtime" name="ContestEtime" placeholder="yyyy-mm-dd hh:mm:ss" value="$contest['ContestEndTime']">
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="ContestPrincipal" class="control-label">Principal</label>
+    <div class="controls">
+      <input type="text" id="ContestPrincipal" name="ContestPrincipal" value="$contest['ContestPrincipal']">
+    </div>
+  </div>
+  $if db.Member.GetLevel(session.userid) == 10:
+      <div class="control-group">
+        <label for="UpRating" class="control-label">UpRating</label>
+        <div class="controls">
+          <input type="text" id="UpRating" name="UpRating" value="$contest['UpRating']">
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="DownRating" class="control-label">DownRating</label>
+        <div class="controls">
+          <input type="text" id="DownRating" name="DownRating" value="$contest['DownRating']">
+        </div>
+      </div>
+  <div class="control-group">
+    <label for="ContestDescription" class="biglabel">Description</label>
+    <div class="wmd-panel">
+      <div id="wmd-button-bar-desc"></div>
+      <textarea class="wmd-input" id="wmd-input-desc" name="ContestDescription">$contest['ContestDescription']</textarea>
+      <div id="wmd-preview-desc" class="wmd-panel wmd-preview"></div>
+    </div>
+  </div>
+    <table class="table table-hover">
+      <caption>
+        <h2>Problems</h2>
+      </caption>
+      <thead>
+        <tr>
+          <th class="span1">#</th>
+          <th class="span1"></th>
+          <th>Problem</th>
+          <th>Source</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        $if problems and (contest.ContestStatus != 1 or db.Contest.IsPrincipal(contest.ContestID, session.userid)):
+            $for prob in problems:
+                <tr$:DONE[prob.ProblemDone][1] id="$loop.index" draggable="true" ondragstart="dragStart(event);" ondrop="drop(event);" ondragover="allowDrop(event)">
+                  <td>$loop.index</td>
+                  <td>$:DONE[prob.ProblemDone][0]</td>
+                  <td><a href="/c${contest.ContestID}p$prob.ProblemID#showproblem">$prob.ProblemTitle</a></td>
+                  <td>$prob.ProblemSource</td>
+                  <td style="width: 1%;"><input style="width: 100%;" type="checkbox" name="Delete" value="$prob.ProblemID"></td>
+                </tr>
+      </tbody>
+    </table>
+    <h4>Add problems here</h4>
+    <input type="text" id="ProblemList" name="ProblemList" placeholder="e.g. 1000|1003|1034|1111">
+  <div class="form-submit">
+        <input type="submit" id="submit" name="submit" value="Edit" class="btn btn-primary" onclick="Submit(event, this);">
+  </div>
+</form>
+<script>
+(function() {
+  var converter_desc = Markdown.getSanitizingConverter();
+  var editor_desc = new Markdown.Editor(converter_desc, '-desc');
+  editor_desc.run();
+}
+)();
+      var flag=false;
+      function dragStart(e) {
+        //console.log('drag start');
+        e.dataTransfer.setData("Text", e.target.id);
+        e.dataTransfer.effectAllowed = 'move';
+        //e.dataTransfer.setDragImage = 
+      }
+      function allowDrop(event) {
+        //console.log('allow drop');
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      }
+      function drop(e) {
+        e.preventDefault();
+        var data = e.dataTransfer.getData("Text");
+        if ($$(e.target).parent().attr("id") == data) return;
+        if ($$(e.target).parent().attr("id") == null) return;
+        flag = true;
+        $$($$(e.target).parent()).after(document.getElementById(data));
+      }
+      function Submit(e,th) {
+        e.preventDefault();
+        var x = $$("table").find("a").toArray();
+        var y = $$("form").serialize();
+        $$(th).attr("disabled","");
+        if (flag)
+        for (var i = 0; i < x.length; ++i) {
+          y += "&problems=" + $$(x[i]).attr("href").substr(2,10);
+        }
+        $$.post("", y, 
+          function(data){
+            data = eval('('+data+')');
+            alert("Data Loaded: " + data["mesg"]);
+            if (data["flag"]) location.href = '/c$cid';
+            else $$(th).attr("disabled",false);
+          });
+      }
+</script>

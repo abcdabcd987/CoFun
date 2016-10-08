@@ -11,6 +11,8 @@ $code:
         5:      'alert alert-error',
         6:      'alert',
         7:      'alert',
+        8:      'alert',
+        9:      'alert alert-error',
     }
     where = '?pid=%s&uid=%s&lang=%s&stat=%s&cid=%s' % (pid, uid, lang, stat, cid)
 $if ajax:
@@ -20,32 +22,37 @@ $if ajax:
                 <tr id="status-$s.SubmitID" class="$ALERTLIST[s.SubmitStatus]">
             $else:
                 <tr id="status-$s.SubmitID">
-              <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
-              <td>$s.UserName</td>
-              <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
-              $if s.SubmitStatus > 100:
-                  $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
-              $else:
-                  $ stat = RESULTLIST[s.SubmitStatus]
-              $if s.SubmitStatus > 100 or s.SubmitStatus == 0:
-                  <td id="stat-$s.SubmitID"><div class="ajax-ball hidden" id="ajaxdiv-$s.SubmitID"><img src="/static/ajax-jump-ball.gif" alt="Jumping ball"></div><div id="ajaxstat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></div></td>
-              $else:
+            <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
+            <!--<td class="usercol"><a href="/u$s.UserID">$s.UserName</a></td>-->
+            $if s.ContestID:
+                <td class="usercol">$:GetUserHtml(s.Rating, s.UserName, s.UserID, None, '* ')</td>
+                <td><a href="/c${s.ContestID}p${s.ProblemID}#showproblem">$s.ProblemID</a></td>
+            $else:
+                <td class="usercol">$:GetUserHtml(s.Rating, s.UserName, s.UserID)</td>
+                <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
+            $if s.SubmitStatus > 100:
+                $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
+            $else:
+                $ stat = RESULTLIST[s.SubmitStatus]
+            $if s.SubmitStatus > 100 or s.SubmitStatus == 0:
+                <td id="stat-$s.SubmitID"><div class="ajax-ball hidden" id="ajaxdiv-$s.SubmitID"><img src="/static/ajax-jump-ball.gif" alt="Jumping ball"></div><div id="ajaxstat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></div></td>
+            $else:
                 <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
-              $if s.SubmitStatus > 1:
-                  <td id="score-$s.SubmitID">$s.SubmitScore</td>
-                  <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
-                  <td id="time-$s.SubmitID">${s.SubmitRunTime}MS</td>
-              $else:
-                  <td id="score-$s.SubmitID"></td>
-                  <td id="memory-$s.SubmitID"></td>
-                  <td id="time-$s.SubmitID"></td>
-              <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
-              $if s.SubmitStatus >= 0:
-                  <td>${s.CodeLength}B</td>
-                  <td>$s.SubmitTime</td>
-              $else:
-                  <td></td>
-                  <td></td>
+            $if s.SubmitStatus > 1 and s.SubmitStatus <= 100:
+                <td id="score-$s.SubmitID">$s.SubmitScore</td>
+                <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
+                <td id="time-$s.SubmitID">${s.SubmitRunTime}MS</td>
+            $else:
+                <td id="score-$s.SubmitID"></td>
+                <td id="memory-$s.SubmitID"></td>
+                <td id="time-$s.SubmitID"></td>
+            <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+            $if s.SubmitStatus >= 0:
+                <td>${s.CodeLength}B</td>
+                <td>$s.SubmitTime</td>
+            $else:
+                <td></td>
+                <td></td>
             </tr>
 $else:
     <table class="table table-hover table-condensed">
@@ -86,7 +93,7 @@ $else:
             </select>
             <select name="stat" class="span3">
               <option value=""$vstat['']>--Status--</option>
-              <option value="-1"$vstat[-1]>Hidden</option>
+              <!--<option value="-1"$vstat[-1]>Hidden</option>-->
               <option value="0"$vstat[0]>Waiting</option>
               <option value="1"$vstat[1]>Compile Error</option>
               <option value="2"$vstat[2]>Running &amp; Judging</option>
@@ -96,7 +103,7 @@ $else:
               <option value="6"$vstat[6]>Time Limit Exceeded</option>
               <option value="7"$vstat[7]>Memory Limit Exceeded</option>
             </select>
-            <input type="text" name="cid" id="cid" class="span2" placeholder="ContestID">
+            <input type="text" name="cid" id="cid" class="span2" placeholder="ContestID"$vcid>
             <input type="submit" class="btn">
           </form>
         </div>
@@ -104,7 +111,7 @@ $else:
       <thead>
         <tr>
           <th class="span1">#</th>
-          <th>User</th>
+          <th class="span2">User</th>
           <th>Problem</th>
           <th>Result</th>
           <th>Score</th>
@@ -122,32 +129,37 @@ $else:
                     <tr id="status-$s.SubmitID" class="$ALERTLIST[s.SubmitStatus]">
                 $else:
                     <tr id="status-$s.SubmitID">
-                  <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
-                  <td>$s.UserName</td>
-                  <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
-                  $if s.SubmitStatus > 100:
-                      $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
-                  $else:
-                      $ stat = RESULTLIST[s.SubmitStatus]
-                  $if s.SubmitStatus > 100 or s.SubmitStatus == 0:
-                      <td id="stat-$s.SubmitID"><div class="ajax-ball hidden" id="ajaxdiv-$s.SubmitID"><img src="/static/ajax-jump-ball.gif" alt="Jumping ball"></div><div id="ajaxstat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></div></td>
-                  $else:
-                      <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
-                  $if s.SubmitStatus > 1:
-                      <td id="score-$s.SubmitID">$s.SubmitScore</td>
-                      <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
-                      <td id="time-$s.SubmitID">${s.SubmitRunTime}MS</td>
-                  $else:
-                      <td id="score-$s.SubmitID"></td>
-                      <td id="memory-$s.SubmitID"></td>
-                      <td id="time-$s.SubmitID"></td>
-                  <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
-                  $if s.SubmitStatus >= 0:
-                      <td>${s.CodeLength}B</td>
-                      <td>$s.SubmitTime</td>
-                  $else:
-                      <td></td>
-                      <td></td>
+                <!--<td class="usercol"><a href="/u$s.UserID">$s.UserName</a></td>-->
+                <td><a href="/s$s.SubmitID">$s.SubmitID</a></td>
+                $if s.ContestID:
+                    <td class="usercol">$:GetUserHtml(s.Rating, s.UserName, s.UserID, None, '* ')</td>
+                    <td><a href="/c${s.ContestID}p${s.ProblemID}#showproblem">$s.ProblemID</a></td>
+                $else:
+                    <td class="usercol">$:GetUserHtml(s.Rating, s.UserName, s.UserID)</td>
+                    <td><a href="/p$s.ProblemID">$s.ProblemID</a></td>
+                $if s.SubmitStatus > 100:
+                    $ stat = RESULTLIST[100] % (s.SubmitStatus-100)
+                $else:
+                    $ stat = RESULTLIST[s.SubmitStatus]
+                $if s.SubmitStatus > 100 or s.SubmitStatus == 0:
+                    <td id="stat-$s.SubmitID"><div class="ajax-ball hidden" id="ajaxdiv-$s.SubmitID"><img src="/static/ajax-jump-ball.gif" alt="Jumping ball"></div><div id="ajaxstat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></div></td>
+                $else:
+                    <td id="stat-$s.SubmitID"><a href="/s$s.SubmitID">$:stat</a></td>
+                $if s.SubmitStatus > 1 and s.SubmitStatus <= 100:
+                    <td id="score-$s.SubmitID">$s.SubmitScore</td>
+                    <td id="memory-$s.SubmitID">${s.SubmitRunMemory}KB</td>
+                    <td id="time-$s.SubmitID">${s.SubmitRunTime}MS</td>
+                $else:
+                    <td id="score-$s.SubmitID"></td>
+                    <td id="memory-$s.SubmitID"></td>
+                    <td id="time-$s.SubmitID"></td>
+                <td><a href="/s$s.SubmitID">$:LANGUAGELIST[s.SubmitLanguage]</a></td>
+                $if s.SubmitStatus >= 0:
+                    <td>${s.CodeLength}B</td>
+                    <td>$s.SubmitTime</td>
+                $else:
+                    <td></td>
+                    <td></td>
                 </tr>
       </tbody>
     </table>
@@ -174,12 +186,14 @@ $else:
               if (ret[i]["SubmitStatus"] > 100) {
                 $$("#ajaxdiv-"+ret[i]["SubmitID"]).removeClass("hidden");
               }
-              $$("#ajaxstat-"+ret[i]["SubmitID"]).html(ret[i]["html"]);
+              $$("#ajaxstat-"+ret[i]["SubmitID"]).html('<a href=\"/s'+ret[i]["SubmitID"]+'\">'+ret[i]["html"]+'</a>');
             } else {
-              $$("#stat-"+ret[i]["SubmitID"]).html(ret[i]["html"]);
+              $$("#stat-"+ret[i]["SubmitID"]).html('<a href=\"/s'+ret[i]["SubmitID"]+'\">'+ret[i]["html"]+'</a>');
+              $$("#status-"+ret[i]["SubmitID"]).addClass(ret[i]["Class"]);
+              $$("#score-"+ret[i]["SubmitID"]).html(ret[i]["SubmitScore"]);
+              $$("#memory-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunMemory"]+"KB");
+              $$("#time-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunTime"]+"MS");
             }
-            $$("#memory-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunMemory"]+"KB");
-            $$("#time-"+ret[i]["SubmitID"]).html(ret[i]["SubmitRunTime"]+"MS");
             if (ret[i]["SubmitStatus"] === 0 || ret[i]["SubmitStatus"] > 100) {
               if (wait === "") {
                 wait += ret[i]["SubmitID"]

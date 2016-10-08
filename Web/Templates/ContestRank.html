@@ -1,5 +1,10 @@
-$def with (contest, rank)
+$def with (contest, res, problems)
 $code:
+    CONTESTSTATUS = {
+        1:    ('label label-success', 'Ready'),
+        2:    ('label label-warning', 'Live'),
+        3:    ('label', 'Done'),
+    }
     COLOR = {
         0:    'danger',
         1:    'warning',
@@ -16,45 +21,48 @@ $if contest:
       <dt>End Time</dt>
       <dd>$contest.ContestEndTime</dd>
       <dt>Status</dt>
-      <dd><span class="label">Done</span></dd>
+      <dd><span class="$CONTESTSTATUS[contest.ContestStatus][0]">$CONTESTSTATUS[contest.ContestStatus][1]</span></dd>
       <dt>Principal</dt>
       <dd>$contest.ContestPrincipal</dd>
       <dt>Description</dt>
       <dd>$:contest.ContestDescription</dd>
     </dl>
     <a name="rank"></a>
-    <div style="height:40px;"></div>
-    <table class="table table-hover">
+    <table style="margin-top:40px;" class="table table-hover">
       <caption>
-        <h2>Contest Rank</h2>
+        <h2>Contest Result</h2>
       </caption>
       <thead>
         <tr>
           <th class="span1">#</th>
           <th class="span2">User</th>
+          $for i in problems:
+              <th class="span2">$i.ProblemTitle</th>
           <th>Score</th>
           <th class="span1">Time</th>
         </tr>
       </thead>
       <tbody id="status-table">
-        $if rank:
-            $for result in rank:
+        $if res:
+            $for result in res:
                 $if loop.index == 1:
                     $ c = COLOR[0]
                 $elif loop.index <= 3:
                     $ c = COLOR[1]
                 $else:
                     $ c = COLOR[2]
-                $if session.userid == result.UserID:
+                $if session.userid == result['UserID']:
                     $ myself = ' active'
                     $ c = COLOR[3]
                 $else:
                     $ myself = ''
                 <tr class="alert alert-$c">
                   <td>$loop.index</td>
-                  <td>$result.UserName</td>
-                  <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/contest.FullScore}%">$result.Score</div></div></td>
-                  <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
+                  <td class="usercol">$:GetUserHtml(result['Rating'], result['UserName'], result['UserID'], result['RealName'])</td>
+                  $for i in problems:
+                      <td><div class="progress progress-success progress-striped$myself"><div class="bar" style="width: ${min(float(result.get(i.ProblemID,0)*100)/100,100)}%">$result.get(i.ProblemID,'0.000')</div></div></td>
+                  <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result['Score']*100)/contest.FullScore}%">$result['Score']</div></div></td>
+                  <td>${'%d.%03ds' % (result['Time']//1000, result['Time']%1000)}</td>
                 </tr>
       </tbody>
     </table>

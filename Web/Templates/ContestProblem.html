@@ -37,7 +37,12 @@ $if contest and problem:
         $ sp = ''
     $else:
         $ sp = '/%d' % contest.ContestID
-    <a class="btn btn-primary" href="/submit/$problem.ProblemID$sp">Submit</a>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="/submit/$problem.ProblemID$sp">Submit</a>
+      <a class="btn btn-success" href="/status/?pid=${problem.ProblemID}&uid=&lang=&stat=&cid=">Status</a>
+      $if db.Contest.IsPrincipal(contest.ContestID, session.userid):
+          <a class="btn btn-danger" href="/ep$problem.ProblemID">Edit</a>
+    </div>
     <section>
       <h2>Description</h2>
       <div class="markdown">$:problem.ProblemDescription</div>
@@ -69,7 +74,12 @@ $if contest and problem:
           <pre>$problem.ProblemSource</pre>
         </section>
     <section>
-      <a class="btn btn-primary" href="/submit/$problem.ProblemID$sp">Submit</a>
+      <div class="btn-group">
+        <a class="btn btn-primary" href="/submit/$problem.ProblemID$sp">Submit</a>
+        <a class="btn btn-success" href="/status/?pid=${problem.ProblemID}&uid=&lang=&stat=&cid=">Status</a>
+        $if db.Contest.IsPrincipal(contest.ContestID, session.userid):
+            <a class="btn btn-danger" href="/ep$problem.ProblemID">Edit</a>
+      </div>
     </section>
 $else:
     $var title: Not Found the Problem

@@ -1,4 +1,4 @@
-$def with (series, rank, ajax=None)
+$def with (series, page, count, rank, ajax=None)
 $code:
     COLOR = {
         0:    'danger',
@@ -23,8 +23,9 @@ $if series:
                 $else:
                     $ myself = ''
                 <tr class="alert alert-$c">
-                  <td>$loop.index</td>
-                  <td>$result.UserName</td>
+                  $ nowrank = loop.index+CONFIG['seriesrankrows']*(page-1)
+                  <td>$nowrank</td>
+                  <td class="usercol">$:GetUserHtml(result['Rating'], result['UserName'], result['UserID'], result['RealName'])</td>
                   <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
                   <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
                 </tr>
@@ -42,6 +43,23 @@ $if series:
         <table class="table table-hover">
           <caption>
             <h2>Series Rank</h2>
+            <div class="pagination">
+              <ul>
+                $if page == 1:
+                    <li class="disabled"><a href="#rank">Prev</a></li>
+                $else:
+                    <li><a href="/series$series.SeriesID/rank/${page-1}#rank">Prev</a></li>
+                $for i in xrange(1, count+1):
+                    $if page == i:
+                        <li class="active"><a href="/series$series.SeriesID/rank/$i#rank">$i</a></li>
+                    $else:
+                        <li><a href="/series$series.SeriesID/rank/$i#rank">$i</a></li>
+                $if page == count:
+                    <li class="disabled"><a href="#rank">Next</a></li>
+                $else:
+                    <li><a href="/series$series.SeriesID/rank/${page+1}#rank">Next</a></li>
+              </ul>
+            </div>
           </caption>
           <thead>
             <tr>
@@ -66,16 +84,34 @@ $if series:
                     $else:
                         $ myself = ''
                     <tr class="alert alert-$c">
-                      <td>$loop.index</td>
-                      <td>$result.UserName</td>
+                    $ nowrank = loop.index+CONFIG['seriesrankrows']*(page-1)
+                    <td>$nowrank</td>
+                    <td class="usercol">$:GetUserHtml(result['Rating'], result['UserName'], result['UserID'], result['RealName'])</td>
                       <td><div class="progress progress-$c progress-striped$myself"><div class="bar" style="width: ${float(result.Score*100)/series.FullScore}%">$result.Score</div></div></td>
                       <td>${'%d.%03ds' % (result.Time//1000, result.Time%1000)}</td>
                     </tr>
           </tbody>
         </table>
+            <div class="pagination center">
+              <ul>
+                $if page == 1:
+                    <li class="disabled"><a href="#rank">Prev</a></li>
+                $else:
+                    <li><a href="/series$series.SeriesID/rank/${page-1}#rank">Prev</a></li>
+                $for i in xrange(1, count+1):
+                    $if page == i:
+                        <li class="active"><a href="/series$series.SeriesID/rank/$i#rank">$i</a></li>
+                    $else:
+                        <li><a href="/series$series.SeriesID/rank/$i#rank">$i</a></li>
+                $if page == count:
+                    <li class="disabled"><a href="#rank">Next</a></li>
+                $else:
+                    <li><a href="/series$series.SeriesID/rank/${page+1}#rank">Next</a></li>
+              </ul>
+            </div>
         <script>
         function gettable() {
-          $$.get("/series$series.SeriesID/rankajax", null, function (data, textStatus) {
+          $$.get("/series$series.SeriesID/rank/${page}ajax", null, function (data, textStatus) {
              $$("#status-table").html(data);
            });
            setTimeout("gettable();", 60000);

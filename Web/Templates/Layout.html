@@ -11,7 +11,8 @@ $else:
 <meta name="description" content="A simple online judge system for OI">
 <link href="/static/bootstrap.min.css" rel="stylesheet">
 <link href="/static/bootstrap-responsive.min.css" rel="stylesheet">
-<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Code+Pro' rel='stylesheet' type='text/css'>
+<!--<link href='http://fonts.useso.com/css?family=Source+Sans+Pro|Source+Code+Pro' rel='stylesheet' type='text/css'>-->
+<link href="/static/fonts.css" rel='stylesheet' type='text/css'>
 <link href="/static/cofun.css?v=20121107v2" rel="stylesheet">
 <!--[if lt IE 9]>
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -39,12 +40,13 @@ $if 'head' in content:
       <div class="nav-collapse collapse">
         <ul class="nav">
           <!--<li class="active"><a href="/">Home</a></li>-->
-          <li><a href="/">Home</a></li>
-          <li><a href="/problem/">Problemlist</a></li>
+          <!--<li><a href="/">Home</a></li>-->
+          <li><a href="/problem/">Problem List</a></li>
           <li><a href="/contest/">Contest List</a></li>
           <li><a href="/series/">Series List</a></li>
+          <li><a href="/ranklist/">Rank List</a></li>
           <li><a href="/status/">Status</a></li>
-          $if session.userid != -1:
+          $if db.Member.GetLevel(session.userid) > 0:
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -57,15 +59,15 @@ $if 'head' in content:
                   <li><a href="#">One more separated link</a></li>-->
                 </ul>
               </li>
-              <li>
-                <form id="gotoprob-form" name="gotoprob-form" class="navbar-form">
-                  <input type="text" id="gotoprob" name="gotoprob" class="span1" placeholder="Go!">
-                </form>
-              </li>
+          <li>
+            <form id="gotoprob-form" name="gotoprob-form" class="navbar-form" style="padding: 0px 15px 0px;">
+              <input type="text" id="gotoprob" name="gotoprob" class="span1" placeholder="Go!">
+            </form>
+          </li>
         </ul>
         $if session.userid == -1:
             <form class="navbar-form pull-right" method="POST" action="/login/" name="LoginForm">
-              <input class="span2" type="text" id="Username" name="Username" placeholder="Username">
+              <input class="span2" type="text" id="Username" name="Username" placeholder="Username" style="width: 90px;">
               <input class="span1" type="password" id="Password" name="Password" placeholder="Passwd">
               <button type="submit" class="btn">Login</button>
               <a href="/register/" class="btn">Register</a>
@@ -75,8 +77,10 @@ $if 'head' in content:
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/$session.gravatar?s=32&amp;r=X&amp;d=identicon" alt="$session.username" class="nav-gravatar" /> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li class="nav-header">$session.username</li>
-                  <li><a href="http://cn.gravatar.com" target="_blank">Change avater</a></li>
+                $ result = db.Member.GetInfo(session.userid)
+                  <li><a href="/u$session.userid" class="$GetColor(result['Rating'])" title="$GetTitle(result['Rating']) $session.username" style="font-weight: bold;">$session.username</a></li>
+                  <li><a href="http://cn.gravatar.com" target="_blank">Change avatar</a></li>
+                  <li><a href="/modifyuser/">Modify</a></li>
                   <li><a href="/logout/">Logout</a></li>
                   <!--<li class="divider"></li>
                   <li class="nav-header">Nav header</li>
@@ -89,12 +93,12 @@ $if 'head' in content:
     </div>
   </div>
 </div>
-<div class="container">
+<div class="container" id="content">
 $:content
   <hr>
   <footer>
     <p>&copy; CoFun.org 2012 | A simple Online Judge System designed for <span class="label label-important">Quanzhou No.7 High School</span> OI training.</p>
-    <p>Powered by <a href="https://github.com/abcdabcd987/CoFun">CoFun</a> | Version: <code>$:VERSION</code> | <a class="label label-info" href="/whatsnew/">What's New?</a></p>
+    <p>Powered by <a href="https://github.com/abcdabcd987/CoFun">CoFun</a> | Version: <code>$:VERSION</code> | <a class="label label-info" href="/whatsnew/">What's New?</a> | <a class="label label-success" href="/faq/">FAQs?</a></p>
   </footer>
 </div> <!-- /container -->
 <script>
