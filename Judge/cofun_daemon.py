@@ -105,6 +105,9 @@ def Process(tasks):
         lang = task['SubmitLanguage']
         spj = task['ProblemID'] if task['SpecialJudge'] else None
         fsource = open('__source.'+EXTENSION[lang], 'w')
+        
+        task['SubmitCode'].replace("/dev/console", "") #HERE
+        
         fsource.write(task['SubmitCode'])
         fsource.close()
 
